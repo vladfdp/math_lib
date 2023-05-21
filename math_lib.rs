@@ -1,143 +1,173 @@
-
-struct Zp{ //ring Z/pZ, if p prime we get a field
+use std::ops::{Mul,Add};
+struct Zn{ //ring Z/nZ, if n prime we get a field
     nb: u32,
-    p:u32
+    n:u32
 }
 
 struct Matrix{ //would be nice to let coefficients be part of any ring
     coeff: Vec<u32>,
-    size:usize
+    n:usize
 }
 
-impl std::ops::Add for &Zp{
-    type Output = Zp;
+impl Add for Zn{
+    type Output = Zn;
 
-    fn add(self, other: &Zp) -> Zp{
-        if self.p != other.p {
-            panic!("operands don't belong to the same field F{} and F{}",self.p,other.p);        
+    fn add(self, other: Zn) -> Zn{
+        if self.n != other.n {
+            panic!("operands don't belong to the same ring Z{} and Z{}",self.n,other.n);        
         }
-        Zp {
-            nb: (self.nb + other.nb) % self.p,
-            p: self.p
+        Zn {
+            nb: (self.nb + other.nb) % self.n,
+            n: self.n
         }
     }
 
 
 }
 
-impl std::ops::Mul for &Zp{
-    type Output = Zp;
+impl Mul for Zn{
+    type Output = Zn;
 
-    fn mul(self, other: &Zp) -> Zp{
-        if self.p != other.p {
-            panic!("operands don't belong to the same field F{} and F{}",self.p,other.p);
+    fn mul(self, other: Zn) -> Zn{
+        if self.n != other.n {
+            panic!("operands don't belong to the same ring Z{} and Z{}",self.n,other.n);
         }
-        Zp {
-            nb: (self.nb * other.nb) % self.p,
-            p: self.p
+        Zn {
+            nb: (self.nb * other.nb) % self.n,
+            n: self.n
         }
 
     }
 }
 
+impl Mul<u32> for Zn{
+    type Output = Zn;
 
-impl Zp{
+    fn mul(self, scalar:u32 ) -> Zn{
+        Zn {
+            nb: (self.nb * scalar) % self.n,
+            n: self.n
+        }
 
-    fn copy(&self) -> Zp { //there is probably a better way to do this
-        Zp{
+    }
+}
+
+impl Clone for Zn{
+    fn clone(&self) -> Zn { //I don't know what i'm doing
+        Zn{
             nb: self.nb,
-            p:self.p
+            n:self.n
         }
-    }
-
-
-
-    fn pow(&self, n: u32) -> Zp { //using fast exponentiation
-        let mut x = self.copy();
-        let mut k = n;
-        let mut ans = Zp{nb:1, p: self.p};
-        while k > 0{
-            if k % 2 == 1{
-                ans = &ans * &x;
-            }
-
-            x = &x * &x;
-            k = k/2;
-        }
-        ans
-    }
-
-    fn inv(&self) -> Zp{  //p must be prime for this to work
-        self.pow(self.p-2)
     }
 }
+
+pub trait One{ //Trait to get the multiplicative identity of the ring
+    fn one(&self)-> Self;
+}
+
+
+impl One for Zn{
+    fn one(&self)->Zn{ Zn{nb:1, n: self.n}}
+}
+
+impl Zn{
+
+    
+
+    fn copy(&self) -> Zn { //there is probably a better way to do this
+        Zn{
+            nb: self.nb,
+            n:self.n
+        }
+    }
+
+
+
+    // fn pow(&self, n: u32) -> Zn { //using fast exponentiation
+    //     let mut x = self.copy();
+    //     let mut k = n;
+    //     let mut ans = Zn::one(self.n);
+    //     while k > 0{
+    //         if k % 2 == 1{
+    //             ans = &ans * &x;
+    //         }
+
+    //         x = &x * &x;
+    //         k = k/2;
+    //     }
+    //     ans
+    // }
+
+    // fn inv(&self) -> Zn{  //p must be prime for this to work
+    //     self.pow(self.n-2)
+    // }
+}
+
 
 impl Matrix{                // get an element of the Matrix, a line or a column or create new Matrix
     fn get(&self,i:usize,j:usize) -> u32{
-        self.coeff[ i*self.size + j]
+        self.coeff[ i*self.n + j]
     }
 
     fn get_lin(&self,i:usize)->Vec<u32>{
-        if self.size < i {
-            panic!("cannot get line {} as matrix is size {}",i ,self.size);
+        if self.n < i {
+            panic!("cannot get line {} as matrix is size {}",i ,self.n);
         }
         let mut ans: Vec<u32> = Vec::new();
-        for k in 0..self.size{
-            ans.push(self.coeff[i*self.size + k]);
+        for k in 0..self.n{
+            ans.push(self.coeff[i*self.n + k]);
         }    
         ans
     }
 
     fn get_col(&self,j:usize)->Vec<u32>{
-        if self.size < j {
-            panic!("cannot get column {} as matrix is size {}",j ,self.size);
+        if self.n < j {
+            panic!("cannot get column {} as matrix is size {}",j ,self.n);
         }
         let mut ans: Vec<u32> = Vec::new();
-        for k in 0..self.size{
-            ans.push(self.coeff[k*self.size + j]);
+        for k in 0..self.n{
+            ans.push(self.coeff[k*self.n + j]);
         }
         ans
     }
 
-    fn new(coeff:Vec<u32>, size:usize) -> Matrix{
-        if size*size !=coeff.len() {
-            panic!("coeff is not the right length, is {} and should be {}",coeff.len(),size*size);
+    fn new(coeff:Vec<u32>, n:usize) -> Matrix{
+        if n*n !=coeff.len() {
+            panic!("coeff is not the right length, is {} and should be {}",coeff.len(),n*n);
         }
         Matrix{
             coeff,
-            size
+            n
         }
     }
 
 }
 
-impl std::ops::Add for &Matrix{
+impl Add for Matrix{
     type Output = Matrix;
 
-    fn add(self, other: &Matrix) -> Matrix{
-        if self.size != other.size {
-            panic!("Matrices are not the same size {} and {}",self.size,other.size);
+    fn add(self, other: Matrix) -> Matrix{
+        if self.n != other.n {
+            panic!("Matrices are not the same size {} and {}",self.n,other.n);
         }
-        let mut ans = Vec::new();
-        for i in 0..(self.size*self.size){
-            ans.push(self.coeff[i] + other.coeff[i])
-        }
-        Matrix::new(ans, self.size)
-
+        Matrix::new(
+        self.coeff.iter()
+        .zip(other.coeff.iter())
+        .map(|(x,y)|x+y).collect(),
+        self.n)
     }
-
 }
 
-impl std::ops::Mul for &Matrix{
+impl Mul for Matrix{
     type Output = Matrix;
 
-    fn mul(self, other: &Matrix) -> Matrix{
-        if self.size != other.size {
-            panic!("Matrices are not the same size {} and {}",self.size,other.size);
+    fn mul(self, other: Matrix) -> Matrix{
+        if self.n != other.n {
+            panic!("Matrices are not the same size {} and {}",self.n,other.n);
         }
         let mut ans = Vec::new();
-        for i in 0..self.size{
-            for j in 0..self.size{
+        for i in 0..self.n{
+            for j in 0..self.n{
 
             ans.push(self.get_lin(i).iter()
             .zip(other.get_col(j).iter())
@@ -145,33 +175,89 @@ impl std::ops::Mul for &Matrix{
             .sum());
            }
         }
-        Matrix::new(ans, self.size)
+        Matrix::new(ans, self.n)
+    }
+
+    
+}
+
+
+impl Mul<u32> for Matrix{
+    type Output = Matrix;
+
+    fn mul(self,scalar:u32)-> Matrix{
+        Matrix::new(
+            self.coeff.iter().map(|x| scalar * x).collect(),
+            self.n
+        )
+    }
+
+}
+
+
+impl Clone for Matrix{
+    fn clone(&self) -> Matrix{
+        Matrix{
+            coeff: self.coeff.clone(),
+            n: self.n
+        }
     }
 }
 
+impl One for Matrix{
+    fn one(&self)->Matrix{
+        let mut one:Matrix = Matrix::new( vec![0; self.n * self.n], self.n);
+        for i in 0..self.n{
+            one.coeff[ i + i* self.n] = 1;
+        }
+        one
+    }
+}
+
+pub fn pow<T:Clone + Mul + One + Mul<Output = T>>(base:T, n: u32) -> T { //using fast exponentiation
+    let mut x = base.clone();
+    let mut k = n;
+    let mut ans = x.one();
+    while k > 0{
+        if k % 2 == 1{
+            ans = ans * x.clone();
+        }
+        x = x.clone() * x;
+        k = k/2;
+        }
+    ans
+ }
+
+
+
+
 fn main(){
-    // let a = Zp{nb:4,p:7};
-    // let b = Zp{nb:5,p:7};
+    let a = Zn{nb:4,n:7};
+    // let b = Zn{nb:5,n:7};
     // let c = &a + &b;
     // let d = &a * &b;
-    // let e = a.pow(3);
+    let e:Zn = pow(a.clone(),3);
     // let f = a.inv();
-    // let k = 3;
+    let k = 3;
     // println!("{}+{} is {}", a.nb, b.nb, c.nb);
     // println!("{}x{} is {}", a.nb, b.nb, d.nb);
-    // println!("{}^{} is {}", a.nb, k, e.nb);
+    println!("{}^{} is {}", a.nb, k, e.nb);
     // println!("{}^-1 is {}", a.nb, f.nb);
 
     let A = Matrix::new(vec![2,4,6,3],2);
     let B = Matrix::new(vec![1,5,8,1],2);
     let col1 = A.get_col(1);
     let lin0 = A.get_lin(0);
-    let C = &A + &B;
-    let D = &A * &B;
+    let C = A.clone() + B.clone();
+    let D = A.clone() * B.clone();
+    let E = pow(A.clone(),4);
+    let F = A.clone() * 5;
     println!("the second column of A is {:?}",col1);
     println!("the first line of A is {:?}",lin0);
     println!("A+B is {:?}",C.coeff);
     println!("A*B is {:?}",D.coeff);
+    println!("A^4 is {:?}",E.coeff);
+    println!("A*5 is {:?}",F.coeff)
 
 }
 
