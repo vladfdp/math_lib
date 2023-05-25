@@ -1,4 +1,5 @@
 use std::ops::{Mul,Add};
+use std::convert::TryInto;
 struct Zn{ //ring Z/nZ, if n prime we get a field
     nb: u32,
     n:u32
@@ -7,6 +8,11 @@ struct Zn{ //ring Z/nZ, if n prime we get a field
 struct Matrix{ //would be nice to let coefficients be part of any ring
     coeff: Vec<u32>,
     n:usize
+}
+
+struct Poly_coeff_rep{
+    coeff: Vec<u32>,
+    degree:usize
 }
 
 impl Add for Zn{
@@ -158,6 +164,7 @@ impl Add for Matrix{
     }
 }
 
+
 impl Mul for Matrix{
     type Output = Matrix;
 
@@ -214,6 +221,17 @@ impl One for Matrix{
     }
 }
 
+impl Poly_coeff_rep{
+    fn eval<T:Clone + Add + Mul + Mul<u32> + One + Mul<Output = T> + Mul<u32, Output=T> + Add<Output = T>>(&self,x:T) -> T {
+        let mut ans: T = x.one() * self.coeff[0];
+        for i in 1..(self.degree +1){
+            ans = ans + pow(x.clone(),i.try_into().unwrap())*self.coeff[i];
+        }
+        ans
+    }
+}
+
+
 pub fn pow<T:Clone + Mul + One + Mul<Output = T>>(base:T, n: u32) -> T { //using fast exponentiation
     let mut x = base.clone();
     let mut k = n;
@@ -232,32 +250,38 @@ pub fn pow<T:Clone + Mul + One + Mul<Output = T>>(base:T, n: u32) -> T { //using
 
 
 fn main(){
-    let a = Zn{nb:4,n:7};
+    let a = Zn{nb:5,n:7};
     // let b = Zn{nb:5,n:7};
     // let c = &a + &b;
     // let d = &a * &b;
     let e:Zn = pow(a.clone(),3);
     // let f = a.inv();
-    let k = 3;
+    let P:Poly_coeff_rep = Poly_coeff_rep{ coeff:vec![2,2,0,1], degree: 3};
+    let g:Zn = P.eval(a.clone());
     // println!("{}+{} is {}", a.nb, b.nb, c.nb);
     // println!("{}x{} is {}", a.nb, b.nb, d.nb);
-    println!("{}^{} is {}", a.nb, k, e.nb);
-    // println!("{}^-1 is {}", a.nb, f.nb);
+    println!("{}^3 is {}", a.nb, e.nb);
+    //println!("{}^-1 is {}", a.nb, f.nb);
+    println!("X^3+ 2X + 2 eval at {} in Z/{}Z is {}", a.nb, a.n, g.nb);
 
     let A = Matrix::new(vec![2,4,6,3],2);
-    let B = Matrix::new(vec![1,5,8,1],2);
-    let col1 = A.get_col(1);
-    let lin0 = A.get_lin(0);
-    let C = A.clone() + B.clone();
-    let D = A.clone() * B.clone();
-    let E = pow(A.clone(),4);
-    let F = A.clone() * 5;
-    println!("the second column of A is {:?}",col1);
-    println!("the first line of A is {:?}",lin0);
-    println!("A+B is {:?}",C.coeff);
-    println!("A*B is {:?}",D.coeff);
-    println!("A^4 is {:?}",E.coeff);
-    println!("A*5 is {:?}",F.coeff)
+    // let B = Matrix::new(vec![1,5,8,1],2);
+    // let col1 = A.get_col(1);
+    // let lin0 = A.get_lin(0);
+    // let C = A.clone() + B.clone();
+    // let D = A.clone() * B.clone();
+    // let E = pow(A.clone(),4);
+    // let F = A.clone() * 5;
+    //let G:Matrix = vec![A,B].iter().sum();
+    let H: Matrix = P.eval(A.clone());
+    // println!("the second column of A is {:?}",col1);
+    // println!("the first line of A is {:?}",lin0);
+    // println!("A+B is {:?}",C.coeff);
+    // //println!("test is {:?}",G.coeff)
+    // println!("A*B is {:?}",D.coeff);
+    // println!("A^4 is {:?}",E.coeff);
+    // println!("A*5 is {:?}",F.coeff)
+    println!("X^3+ 2X + 2 eval at A is {:?}", H.coeff);
 
 }
 
