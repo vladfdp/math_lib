@@ -9,7 +9,7 @@ mod poly;
 #[cfg(test)]
 mod tests {
 
-    use crate::poly::PolyNx;
+    use crate::poly::PolyZx;
     //use std::convert::TryInto;
     //use std::ops::{Add,Mul};
     use crate::zn::Zn;
@@ -143,30 +143,30 @@ mod tests {
 
     #[test]
     fn poly_rm_zeros() {
-        let mut poly = PolyNx{coeff:vec![0,0,3,2,5,0,0,0]}.rm_trailing_zeros();
+        let poly = PolyZx{coeff:vec![0,0,3,2,5,0,0,0]}.rm_trailing_zeros();
         assert_eq!(poly.coeff, vec![0,0,3,2,5]);
     }
 
     #[test]
     fn poly_add() {
-        let poly_a = PolyNx{coeff:vec![0,0,3,2,5]};
-        let poly_b = PolyNx{coeff:vec![4,1,7]};
-        let expected_result = PolyNx{coeff:vec![4,1,10,2,5]};
+        let poly_a = PolyZx{coeff:vec![0,0,3,2,5]};
+        let poly_b = PolyZx{coeff:vec![4,1,7]};
+        let expected_result = PolyZx{coeff:vec![4,1,10,2,5]};
 
         assert_eq!(poly_a + poly_b , expected_result);
     }
 
     #[test]
     fn poly_mul() {
-        let poly_a = PolyNx{coeff:vec![1,0,1]};
-        let poly_b = PolyNx{coeff:vec![3,2]};
-        let expected_result = PolyNx{coeff:vec![3,2,3,2]};
+        let poly_a = PolyZx{coeff:vec![1,0,1]};
+        let poly_b = PolyZx{coeff:vec![3,2]};
+        let expected_result = PolyZx{coeff:vec![3,2,3,2]};
 
         assert_eq!(poly_a * poly_b , expected_result);
 
-        let poly_a = PolyNx{coeff:vec![0,0,3,2,5]};
-        let poly_b = PolyNx{coeff:vec![4,1,7]};
-        let expected_result = PolyNx{coeff:vec![0,0,12,11,43,19,35]};
+        let poly_a = PolyZx{coeff:vec![0,0,3,2,5]};
+        let poly_b = PolyZx{coeff:vec![4,1,7]};
+        let expected_result = PolyZx{coeff:vec![0,0,12,11,43,19,35]};
 
         assert_eq!(poly_a * poly_b , expected_result);
     }

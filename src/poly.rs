@@ -4,11 +4,11 @@ use std::convert::TryInto;
 
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct PolyNx{ //N[X] polynomial, they can be evaluated on any ring
-    pub coeff: Vec<u32>
+pub struct PolyZx{ //N[X] polynomial, they can be evaluated on any ring
+    pub coeff: Vec<i32>
 }
 
-impl PolyNx{
+impl PolyZx{
     pub fn get_deg(&self)->usize{self.coeff.len()-1}
 
     pub fn eval<T:Ring>(&self,x:T)-> T {
@@ -21,7 +21,7 @@ impl PolyNx{
 
     }
 
-    pub fn rm_trailing_zeros(mut self)-> PolyNx{
+    pub fn rm_trailing_zeros(mut self)-> PolyZx{
         while self.coeff.last().unwrap() == &0{
             self.coeff.pop();
         }
@@ -30,12 +30,12 @@ impl PolyNx{
 }
 
 
-impl Add for PolyNx{
-    type Output = PolyNx;
+impl Add for PolyZx{
+    type Output = PolyZx;
 
     
 
-    fn add(self, other:PolyNx)-> PolyNx{
+    fn add(self, other:PolyZx)-> PolyZx{
 
         let mut a = self.coeff;
         let mut b = other.coeff;
@@ -47,20 +47,20 @@ impl Add for PolyNx{
             a.push(0);
         }
 
-        PolyNx{ coeff: 
+        PolyZx{ coeff: 
             a.iter()
             .zip(b.iter())
             .map(|(x,y)|x+y).collect()
-        }
+        }.rm_trailing_zeros()
     }
 }
 
-impl Mul for PolyNx{
-    type Output = PolyNx;
+impl Mul for PolyZx{
+    type Output = PolyZx;
 
     
 
-    fn mul(self, other:PolyNx)-> PolyNx{
+    fn mul(self, other:PolyZx)-> PolyZx{
 
         let mut ans = vec![0;self.coeff.len()+other.coeff.len()-1];
 
@@ -71,6 +71,6 @@ impl Mul for PolyNx{
             }
         }
 
-        PolyNx{ coeff: ans }
+        PolyZx{ coeff: ans }
     }
 }

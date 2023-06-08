@@ -3,38 +3,38 @@ use crate::traits::{One,Zero};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Matrix{ //would be nice to let coefficients be part of any ring
-    coeff: Vec<u32>,
+    coeff: Vec<i32>,
     n:usize
 }
 
 impl Matrix{                // get an element of the Matrix, a line or a column or create new Matrix
-    pub fn get(&self,i:usize,j:usize) -> u32{
+    pub fn get(&self,i:usize,j:usize) -> i32{
         self.coeff[ i*self.n + j]
     }
 
-    pub fn get_lin(&self,i:usize)->Vec<u32>{
+    pub fn get_lin(&self,i:usize)->Vec<i32>{
         if self.n < i {
             panic!("cannot get line {} as matrix is size {}",i ,self.n);
         }
-        let mut ans: Vec<u32> = Vec::new();
+        let mut ans: Vec<i32> = Vec::new();
         for k in 0..self.n{
             ans.push(self.coeff[i*self.n + k]);
         }    
         ans
     }
 
-    pub fn get_col(&self,j:usize)->Vec<u32>{
+    pub fn get_col(&self,j:usize)->Vec<i32>{
         if self.n < j {
             panic!("cannot get column {} as matrix is size {}",j ,self.n);
         }
-        let mut ans: Vec<u32> = Vec::new();
+        let mut ans: Vec<i32> = Vec::new();
         for k in 0..self.n{
             ans.push(self.coeff[k*self.n + j]);
         }
         ans
     }
 
-    pub fn new(coeff:Vec<u32>, n:usize) -> Matrix{
+    pub fn new(coeff:Vec<i32>, n:usize) -> Matrix{
         if n*n !=coeff.len() {
             panic!("coeff is not the right length, is {} and should be {}",coeff.len(),n*n);
         }
@@ -84,10 +84,10 @@ impl Mul for Matrix{
     
 }
 
-impl Mul<u32> for Matrix{
+impl Mul<i32> for Matrix{
     type Output = Matrix;
 
-    fn mul(self,scalar:u32)-> Matrix{
+    fn mul(self,scalar:i32)-> Matrix{
         Matrix::new(
             self.coeff.iter().map(|x| scalar * x).collect(),
             self.n
@@ -112,3 +112,4 @@ impl Zero for Matrix{
         Matrix::new( vec![0; self.n * self.n], self.n)
     }
 }
+

@@ -9,11 +9,13 @@ pub trait Zero{
     fn zero(&self)-> Self;
 }
 
+
+
 pub trait Pow: Clone + One + Mul + Mul<Output = Self>{
-    fn pow(&self, n:u32)-> Self;
+    fn pow(&self, n:i32)-> Self;
 }
 impl<T: Clone + One + Mul + Mul<Output = T>> Pow for T {
-    fn pow(&self, n:u32)-> T{
+    fn pow(&self, n:i32)-> T{
         let mut x = self.clone();
         let mut k = n;
         let mut ans = x.one();
@@ -28,5 +30,6 @@ impl<T: Clone + One + Mul + Mul<Output = T>> Pow for T {
     }
 }
 
-pub trait Ring: Pow + Mul<u32, Output = Self> + Zero + Add + Add<Output = Self> {}
-impl<T: Pow + Mul<u32, Output = T> + Zero + Add + Add<Output = T>> Ring for T {}
+
+pub trait Ring: Pow + Mul<i32, Output = Self> + Zero + Add  +Add<Output = Self> {}
+impl<T: Pow + Mul<i32, Output = T> + Zero + Add  + Add<Output = T>> Ring for T {}
