@@ -27,3 +27,6 @@ impl<T: Clone + One + Mul + Mul<Output = T>> Pow for T {
         ans
     }
 }
+
+pub trait Ring: Pow + Mul<u32, Output = Self> + Zero + Add + Add<Output = Self> {}
+impl<T: Pow + Mul<u32, Output = T> + Zero + Add + Add<Output = T>> Ring for T {}

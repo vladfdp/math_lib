@@ -1,6 +1,7 @@
 mod zn;
 mod matrix;
 mod traits;
+mod poly;
 
 
 
@@ -8,6 +9,7 @@ mod traits;
 #[cfg(test)]
 mod tests {
 
+    use crate::poly::PolyNx;
     //use std::convert::TryInto;
     //use std::ops::{Add,Mul};
     use crate::zn::Zn;
@@ -139,19 +141,37 @@ mod tests {
         assert_eq!(matrix_b.pow(3), matrix_b_pow_3);
     }
 
+    #[test]
+    fn poly_rm_zeros() {
+        let mut poly = PolyNx{coeff:vec![0,0,3,2,5,0,0,0]}.rm_trailing_zeros();
+        assert_eq!(poly.coeff, vec![0,0,3,2,5]);
+    }
+
+    #[test]
+    fn poly_add() {
+        let poly_a = PolyNx{coeff:vec![0,0,3,2,5]};
+        let poly_b = PolyNx{coeff:vec![4,1,7]};
+        let expected_result = PolyNx{coeff:vec![4,1,10,2,5]};
+
+        assert_eq!(poly_a + poly_b , expected_result);
+    }
+
+    #[test]
+    fn poly_mul() {
+        let poly_a = PolyNx{coeff:vec![1,0,1]};
+        let poly_b = PolyNx{coeff:vec![3,2]};
+        let expected_result = PolyNx{coeff:vec![3,2,3,2]};
+
+        assert_eq!(poly_a * poly_b , expected_result);
+
+        let poly_a = PolyNx{coeff:vec![0,0,3,2,5]};
+        let poly_b = PolyNx{coeff:vec![4,1,7]};
+        let expected_result = PolyNx{coeff:vec![0,0,12,11,43,19,35]};
+
+        assert_eq!(poly_a * poly_b , expected_result);
+    }
 
 
-    // pub fn pow<T:Foo >(base:T, n: u32) -> T { //using fast exponentiation
-    //     let mut x = base.clone();
-    //     let mut k = n;
-    //     let mut ans = x.one();
-    //     while k > 0{
-    //         if k % 2 == 1{
-    //             ans = ans * x.clone();
-    //         }
-    //         x = x.clone() * x;
-    //         k = k/2;
-    //         }
-    //     ans
-    // }
+
+    
 }
