@@ -52,6 +52,18 @@ impl One for Zn{
 
 impl Zero for Zn{
     fn zero(&self)->Zn{ Zn{nb:0, n: self.n}}
+    fn is_zero(&self)-> bool {
+        self.nb == 0
+    }
 }
 
 
+impl Zn {
+    pub fn into_Zn(vec: Vec<i32>,n:i32)-> Vec<Zn>{
+        let mut ans:Vec<Zn> = Vec::new();
+        for i in  vec{
+            ans.push(Zn { nb: i % n, n: n });
+        }
+        ans
+    }
+}

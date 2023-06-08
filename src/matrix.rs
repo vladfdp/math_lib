@@ -111,5 +111,13 @@ impl Zero for Matrix{
     fn zero(&self)-> Matrix{
         Matrix::new( vec![0; self.n * self.n], self.n)
     }
+    fn is_zero(&self)-> bool {
+        for x in &self.coeff{
+            if x != &0{
+                return false;
+            } 
+        }
+        true
+    }
 }
 

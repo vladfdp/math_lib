@@ -9,14 +9,23 @@ mod poly;
 #[cfg(test)]
 mod tests {
 
-    use crate::poly::PolyZx;
+
     //use std::convert::TryInto;
     //use std::ops::{Add,Mul};
+
+
+    use crate::traits::Pow;
+    use crate::poly::poly_ring::Poly;
     use crate::zn::Zn;
     use crate::matrix::Matrix;
-    use crate::traits::Pow;
 
-    #[test]
+
+    mod zn_tests{
+
+        use crate::zn::Zn;
+        use crate::traits::Pow;
+
+        #[test]
     fn zn_add_same_ring() {
         let a = Zn { nb: 5, n: 7 };
         let b = Zn { nb: 4, n: 7 };
@@ -73,9 +82,14 @@ mod tests {
        let c = Zn { nb: 3, n: 21 };
        assert_eq!(c.pow(3), Zn { nb: 6, n: 21 });
     }
+    }
 
+    mod matrix_test{
 
-    #[test]
+        use crate::matrix::Matrix;
+        use crate::traits::Pow;
+
+        #[test]
     #[should_panic]
     fn matrix_new_invalid() {
         let _matrix_a = Matrix::new(vec![5, 6, 7, 8, 9, 10], 3);
@@ -140,8 +154,15 @@ mod tests {
         let matrix_b_pow_3 = Matrix::new(vec![552, 589, 398, 888, 885, 720, 180, 167, 148], 3);
         assert_eq!(matrix_b.pow(3), matrix_b_pow_3);
     }
+    }
+    
+    mod poly_zx_test{
 
-    #[test]
+
+        use crate::{poly::poly_zx::PolyZx , matrix::Matrix, zn::Zn};
+
+
+        #[test]
     fn poly_rm_zeros() {
         let poly = PolyZx{coeff:vec![0,0,3,2,5,0,0,0]}.rm_trailing_zeros();
         assert_eq!(poly.coeff, vec![0,0,3,2,5]);
@@ -152,6 +173,12 @@ mod tests {
         let poly_a = PolyZx{coeff:vec![0,0,3,2,5]};
         let poly_b = PolyZx{coeff:vec![4,1,7]};
         let expected_result = PolyZx{coeff:vec![4,1,10,2,5]};
+
+        assert_eq!(poly_a + poly_b , expected_result);
+
+        let poly_a = PolyZx{coeff:vec![0,0,3,2,5]};
+        let poly_b = PolyZx{coeff:vec![4,1,7,-2,-5]};
+        let expected_result = PolyZx{coeff:vec![4,1,10]};
 
         assert_eq!(poly_a + poly_b , expected_result);
     }
@@ -169,6 +196,57 @@ mod tests {
         let expected_result = PolyZx{coeff:vec![0,0,12,11,43,19,35]};
 
         assert_eq!(poly_a * poly_b , expected_result);
+    }
+
+    #[test]
+    fn poly_eval(){
+
+        let poly = PolyZx{coeff:vec![4,1,7]};
+
+        let a = Zn{ nb: 3, n:13};
+
+        assert_eq!(poly.eval(a),Zn{nb: 5,n:13});
+
+        let matrix = Matrix::new(vec![1,0,2,3],2);
+
+        assert_eq!(poly.eval(matrix), Matrix::new(vec![12,0,58,70],2));
+    }
+
+    }
+
+    #[test]
+    fn poly_of_poly(){
+
+        use crate::poly::poly_zx::PolyZx;
+
+        let poly_a = PolyZx{coeff:vec![1,2,1]};
+        let poly_b = PolyZx{coeff:vec![4,1,7]};
+        assert_eq!(poly_a.eval(poly_b), PolyZx{coeff:vec![25,10,71,14,49]});
+
+    }
+    
+    #[test]
+    fn poly_eval2(){
+
+        let poly = Poly{coeff:Zn::into_Zn(vec![4,1,7], 13)};
+
+        let a = Zn{ nb: 3, n:13};
+
+        assert_eq!(poly.eval(a),Zn{nb: 5,n:13});
+
+        let matrix_a = Matrix::new(vec![3,0,1,1],2);
+        let matrix_b = Matrix::new(vec![2,4,0,1],2);
+
+        let poly: Poly<Matrix> = Poly { coeff: vec![matrix_a.clone(),matrix_b.clone()] };
+
+        let matrix = Matrix::new(vec![1,0,2,3],2);
+
+        assert_eq!(poly.eval(matrix.clone()), matrix_a + (matrix * matrix_b));
+    }
+
+    #[test]
+    fn test(){
+        println!();
     }
 
 

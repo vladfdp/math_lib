@@ -5,10 +5,25 @@ pub trait One{ //Trait to get the multiplicative identity of the ring
     fn one(&self)-> Self;
 }
 
-pub trait Zero{
-    fn zero(&self)-> Self;
+impl One for i32{
+    fn one(&self)-> Self {
+        1
+    }
 }
 
+pub trait Zero{
+    fn zero(&self)-> Self;
+
+    fn is_zero(&self)-> bool;
+}
+impl Zero for i32 {
+    fn zero(&self)-> Self {
+        0
+    }
+    fn is_zero(&self)-> bool {
+        self == &0
+    }
+}
 
 
 pub trait Pow: Clone + One + Mul + Mul<Output = Self>{
