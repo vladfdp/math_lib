@@ -15,15 +15,14 @@ mod tests {
 
 
     use crate::traits::Pow;
-    use crate::poly::poly_ring::Poly;
-    use crate::zn::Zn;
-    use crate::matrix::Matrix;
+    
 
 
     mod zn_tests{
 
         use crate::zn::Zn;
         use crate::traits::Pow;
+        use crate::traits::Inv;
 
         #[test]
     fn zn_add_same_ring() {
@@ -61,6 +60,15 @@ mod tests {
         let a = Zn { nb: 10_000, n: 15_000 };
         let b = Zn { nb: 7_000, n: 15_000 };
         assert_eq!(a * b, Zn { nb: 10_000, n: 15_000 });
+    }
+
+    #[test]
+    fn zn_inv() {
+        let a = Zn { nb: 5, n: 7 };
+        assert_eq!(a.inv(), Zn { nb: 3, n: 7 });
+
+        let a = Zn { nb: 6, n: 13 };
+        assert_eq!(a.inv(), Zn { nb: 11, n: 13 });
     }
 
     #[test]
@@ -211,9 +219,6 @@ mod tests {
 
         assert_eq!(poly.eval(matrix), Matrix::new(vec![12,0,58,70],2));
     }
-
-    }
-
     #[test]
     fn poly_of_poly(){
 
@@ -224,25 +229,170 @@ mod tests {
         assert_eq!(poly_a.eval(poly_b), PolyZx{coeff:vec![25,10,71,14,49]});
 
     }
-    
-    #[test]
-    fn poly_eval2(){
 
-        let poly = Poly{coeff:Zn::into_Zn(vec![4,1,7], 13)};
-
-        let a = Zn{ nb: 3, n:13};
-
-        assert_eq!(poly.eval(a),Zn{nb: 5,n:13});
-
-        let matrix_a = Matrix::new(vec![3,0,1,1],2);
-        let matrix_b = Matrix::new(vec![2,4,0,1],2);
-
-        let poly: Poly<Matrix> = Poly { coeff: vec![matrix_a.clone(),matrix_b.clone()] };
-
-        let matrix = Matrix::new(vec![1,0,2,3],2);
-
-        assert_eq!(poly.eval(matrix.clone()), matrix_a + (matrix * matrix_b));
     }
+
+    mod poly_ring_test{
+        use crate::traits::{Zero, One};
+        use crate::poly::poly_ring::Poly;
+        use crate::zn::Zn;
+        use crate::matrix::Matrix;
+
+        #[test]
+        fn poly_ring_eval(){
+    
+            let poly = Poly{coeff:Zn::into_Zn(vec![4,1,7], 13)};
+    
+            let a = Zn{ nb: 3, n:13};
+    
+            assert_eq!(poly.eval(a),Zn{nb: 5,n:13});
+    
+            let matrix_a = Matrix::new(vec![3,0,1,1],2);
+            let matrix_b = Matrix::new(vec![2,4,0,1],2);
+    
+            let poly: Poly<Matrix> = Poly { coeff: vec![matrix_a.clone(),matrix_b.clone()] };
+    
+            let matrix = Matrix::new(vec![1,0,2,3],2);
+    
+            assert_eq!(poly.eval(matrix.clone()), matrix_a + (matrix * matrix_b));
+        }
+
+        #[test]
+        fn poly_ring_add() {
+
+
+            let poly_a = Poly{coeff: Zn::into_Zn(vec![5,1,7], 13)};
+            let poly_b = Poly{coeff: Zn::into_Zn(vec![11,1,6], 13)};
+
+            let expected_result = Poly{coeff:Zn::into_Zn(vec![3,2], 13)};
+
+            assert_eq!(poly_a + poly_b, expected_result);
+
+            let poly_a = Poly{coeff: Zn::into_Zn(vec![5,1,7], 13)};
+            let poly_b = Poly{coeff: Zn::into_Zn(vec![8,12,6], 13)};
+
+            let expected_result = Poly{coeff:Zn::into_Zn(vec![0], 13)};
+
+            assert_eq!(poly_a + poly_b, expected_result);
+
+            let poly_a: Poly<i32> = Poly{coeff: vec![5,1,7]};
+            let poly_b: Poly<i32> = Poly{coeff: vec![-5,-1,-7]};
+
+
+            assert!((poly_a + poly_b).is_zero());
+
+        }
+    
+        #[test]
+    fn poly_ring_mul() {
+        let poly_a:Poly<i32> = Poly{coeff:vec![1,0,1]};
+        let poly_b:Poly<i32> = Poly{coeff:vec![3,2]};
+        let expected_result:Poly<i32> = Poly{coeff:vec![3,2,3,2]};
+
+        assert_eq!(poly_a * poly_b , expected_result);
+
+        let poly_a:Poly<i32> = Poly{coeff:vec![0,0,3,2,5]};
+        let poly_b:Poly<i32> = Poly{coeff:vec![4,1,7]};
+        let expected_result:Poly<i32> = Poly{coeff:vec![0,0,12,11,43,19,35]};
+
+        assert_eq!(poly_a * poly_b , expected_result);
+    }
+
+
+        #[test]
+        fn poly_ring_of_poly(){
+
+    
+            let poly_a = Poly{coeff:vec![Poly{coeff:vec![1]},Poly{coeff:vec![2]},Poly{coeff:vec![1]}]};
+            let poly_b = Poly{coeff:vec![4,1,7]};
+            assert_eq!(poly_a.eval(poly_b), Poly{coeff:vec![25,10,71,14,49]});
+    
+        }
+    }
+
+    mod poly_ff_test{
+
+        use crate::poly::poly_ff::Polyff;
+        use crate::zn::Zn;
+        use crate::traits::{One,Inv};
+
+        #[test]
+        fn poly_ff_eval(){
+    
+            let poly = Polyff{coeff:Zn::into_Zn(vec![4,1,7], 13)};
+    
+            let a = Zn{ nb: 3, n:13};
+    
+            assert_eq!(poly.eval(a),Zn{nb: 5,n:13});
+        }
+
+        #[test]
+        fn poly_ff_add() {
+
+
+            let poly_a = Polyff{coeff: Zn::into_Zn(vec![5,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::into_Zn(vec![11,1,6], 13)};
+
+            let expected_result = Polyff{coeff:Zn::into_Zn(vec![3,2], 13)};
+
+            assert_eq!(poly_a + poly_b, expected_result);
+
+            let poly_a = Polyff{coeff: Zn::into_Zn(vec![5,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::into_Zn(vec![8,12,6], 13)};
+
+            let expected_result = Polyff{coeff:Zn::into_Zn(vec![0], 13)};
+
+            assert_eq!(poly_a + poly_b, expected_result);
+
+        }
+    
+        #[test]
+    fn poly_ff_mul() {
+        
+        let poly_a = Polyff{coeff: Zn::into_Zn(vec![4,1,7], 13)};
+        let poly_b = Polyff{coeff: Zn::into_Zn(vec![11,1,6], 13)};
+
+
+        let expected_result = Polyff{coeff:Zn::into_Zn(vec![5,2,11,0,3], 13)};
+
+        assert_eq!(poly_a * poly_b, expected_result);
+    }
+
+    #[test]
+    fn poly_ff_rem(){
+
+        let poly_a = Polyff{coeff: Zn::into_Zn(vec![4,1,7], 13)};
+        let poly_b = Polyff{coeff: Zn::into_Zn(vec![11,1,6], 13)};
+
+
+        let expected_result = Polyff{coeff:Zn::into_Zn(vec![2,2], 13)};
+
+
+        assert_eq!(poly_a % poly_b, expected_result);
+
+        let poly_a = Polyff{coeff: Zn::into_Zn(vec![4,1,7], 13)};
+        let poly_b = Polyff{coeff: Zn::into_Zn(vec![11,1,1,1], 13)};
+
+
+        let expected_result = Polyff{coeff:Zn::into_Zn(vec![4,1,7], 13)};
+
+
+        assert_eq!(poly_a % poly_b, expected_result);
+
+        let poly_a = Polyff{coeff: Zn::into_Zn(vec![4,1,7,5,1], 13)};
+        let poly_b = Polyff{coeff: Zn::into_Zn(vec![1,0,1], 13)};
+
+
+        let expected_result = Polyff{coeff:Zn::into_Zn(vec![11,9], 13)};
+
+
+        assert_eq!(poly_a % poly_b, expected_result);
+
+    }
+
+
+    }
+ 
 
     #[test]
     fn test(){

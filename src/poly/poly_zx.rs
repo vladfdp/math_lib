@@ -24,7 +24,7 @@ impl PolyZx{
     }
 
     pub fn rm_trailing_zeros(mut self)-> PolyZx{
-        while self.coeff.last().unwrap() == &0{
+        while self.coeff.last().unwrap() == &0 && self.coeff.len() > 1{
             self.coeff.pop();
         }
         self
@@ -86,17 +86,14 @@ impl Mul<i32> for PolyZx{
 
 }
 
+
+
 impl Zero for PolyZx {
     fn zero(&self)-> PolyZx{
         PolyZx{coeff:vec![0]}
     }
     fn is_zero(&self)-> bool {
-        for x in &self.coeff{
-            if x != &0{
-                return false;
-            } 
-        }
-        true
+        self.coeff.len() == 1 && self.coeff[0].is_zero()
     }
     
 }

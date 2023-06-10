@@ -1,5 +1,5 @@
 use std::ops::{Mul,Add};
-use crate::traits::{One,Zero};
+use crate::traits::{One, Zero, Pow, Inv};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Zn{ //ring Z/nZ, if n prime we get a field
@@ -39,8 +39,13 @@ impl Mul<i32> for Zn{
     type Output = Zn;
 
     fn mul(self, scalar:i32 ) -> Zn{
+        let mut nb = (self.nb * scalar) % self.n;
+        if scalar < 0{
+            nb += self.n;
+        }
+
         Zn {
-            nb: (self.nb * scalar) % self.n,
+            nb: nb,
             n: self.n
         }
     }
@@ -57,6 +62,10 @@ impl Zero for Zn{
     }
 }
 
+impl Inv for Zn{
+    fn inv(&self)->Zn{self.pow((self.n-2).try_into().unwrap())}
+}
+
 
 impl Zn {
     pub fn into_Zn(vec: Vec<i32>,n:i32)-> Vec<Zn>{
@@ -66,4 +75,6 @@ impl Zn {
         }
         ans
     }
+
+
 }
