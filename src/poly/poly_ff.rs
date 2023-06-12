@@ -31,10 +31,17 @@ where
         self
     }
 
-    pub fn times_x_to_the(mut self,n:usize)->Polyff<T>{
+    pub fn times_x_to_the(&self,n:usize)->Polyff<T>{
+        let mut ans = self.coeff.clone();
         let mut zeros = vec![self.coeff[0].zero();n];
-        zeros.append(&mut self.coeff);
+        zeros.append(&mut ans);
         Polyff{ coeff:zeros}
+    }
+
+    pub fn new_from_vec(coeff:Vec<T>) -> Polyff<T>{
+        Polyff{
+            coeff
+        }
     }
 }
 
@@ -89,6 +96,16 @@ impl<T:Field> Mul<T> for Polyff<T> {
     
 }
 
+impl<T:Field> Mul<i32> for Polyff<T> {
+    type Output = Polyff<T>;
+    fn mul(self, rhs: i32) -> Polyff<T> {
+        Polyff{ coeff: self.coeff.iter()
+            .map(|x| x.clone() * rhs)
+            .collect() }
+    }
+    
+}
+
 impl<T:Field> Zero for Polyff<T>  {
     fn zero(&self)->Polyff<T>{
         Polyff { coeff: vec![self.coeff[0].zero()]}
@@ -117,13 +134,11 @@ impl<T:Field> Rem for Polyff<T>{
         let mut a = self;
         let b = rhs;
         let pivot = b.coeff.last().unwrap().inv() * (-1);
-        //assert_eq!(pivot.clone() * b.coeff.last().unwrap().clone(), pivot.one());
 
         let diff = a.get_deg()-b.get_deg();
         
-        for i in 0..(diff+1){
-            
-            a = a.clone() + (b.clone().times_x_to_the(diff - i) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
+        while a.get_deg() >= b.get_deg() {
+            a = a.clone() + (b.times_x_to_the(a.get_deg() - b.get_deg()) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
             
         }
         a

@@ -37,10 +37,10 @@ impl<T:Ring> Add for Poly<T>{
 
     
 
-    fn add(self, other:Self)-> Self{
+    fn add(self, rhs:Self)-> Self{
 
         let mut a = self.coeff;
-        let mut b = other.coeff;
+        let mut b = rhs.coeff;
 
         while a.len()>b.len() { //we make a and b the same size
             b.push(b[0].zero());
@@ -59,13 +59,13 @@ impl<T:Ring> Add for Poly<T>{
 
 impl<T:Ring> Mul for Poly<T> {
     type Output = Poly<T>;
-    fn mul(self, other: Poly<T>) -> Poly<T> {
-        let mut ans = vec![ self.coeff[0].zero() ;self.coeff.len()+other.coeff.len()-1];
+    fn mul(self, rhs: Poly<T>) -> Poly<T> {
+        let mut ans = vec![ self.coeff[0].zero() ;self.coeff.len()+rhs.coeff.len()-1];
 
         for i in 0..self.coeff.len(){
-            for j in 0..other.coeff.len(){
+            for j in 0..rhs.coeff.len(){
                 ans[i+j] = ans[i+j].clone()
-                + self.coeff[i].clone() * other.coeff[j].clone();   
+                + self.coeff[i].clone() * rhs.coeff[j].clone();   
             }
         }
         Poly{ coeff: ans }
@@ -73,15 +73,15 @@ impl<T:Ring> Mul for Poly<T> {
     
 }
 
-impl<T:Ring> Mul<i32> for Poly<T>{
+
+impl<T:Ring> Mul<T> for Poly<T> {
     type Output = Poly<T>;
-
-    fn mul(self,scalar:i32)-> Poly<T>{
-        Poly{
-            coeff: self.coeff.iter().map(|x| x.clone() * scalar).collect()
-        }
+    fn mul(self, rhs: T) -> Poly<T> {
+        Poly{ coeff: self.coeff.iter()
+            .map(|x| x.clone() * rhs.clone())
+            .collect() }
     }
-
+    
 }
 
 impl<T:Ring> Zero for Poly<T>  {

@@ -2,6 +2,7 @@ mod zn;
 mod matrix;
 mod traits;
 mod poly;
+mod field_extension;
 
 
 
@@ -14,7 +15,6 @@ mod tests {
     //use std::ops::{Add,Mul};
 
 
-    use crate::traits::Pow;
     
 
 
@@ -241,7 +241,7 @@ mod tests {
         #[test]
         fn poly_ring_eval(){
     
-            let poly = Poly{coeff:Zn::into_Zn(vec![4,1,7], 13)};
+            let poly = Poly{coeff:Zn::from_vec(vec![4,1,7], 13)};
     
             let a = Zn{ nb: 3, n:13};
     
@@ -261,17 +261,17 @@ mod tests {
         fn poly_ring_add() {
 
 
-            let poly_a = Poly{coeff: Zn::into_Zn(vec![5,1,7], 13)};
-            let poly_b = Poly{coeff: Zn::into_Zn(vec![11,1,6], 13)};
+            let poly_a = Poly{coeff: Zn::from_vec(vec![5,1,7], 13)};
+            let poly_b = Poly{coeff: Zn::from_vec(vec![11,1,6], 13)};
 
-            let expected_result = Poly{coeff:Zn::into_Zn(vec![3,2], 13)};
+            let expected_result = Poly{coeff:Zn::from_vec(vec![3,2], 13)};
 
             assert_eq!(poly_a + poly_b, expected_result);
 
-            let poly_a = Poly{coeff: Zn::into_Zn(vec![5,1,7], 13)};
-            let poly_b = Poly{coeff: Zn::into_Zn(vec![8,12,6], 13)};
+            let poly_a = Poly{coeff: Zn::from_vec(vec![5,1,7], 13)};
+            let poly_b = Poly{coeff: Zn::from_vec(vec![8,12,6], 13)};
 
-            let expected_result = Poly{coeff:Zn::into_Zn(vec![0], 13)};
+            let expected_result = Poly{coeff:Zn::from_vec(vec![0], 13)};
 
             assert_eq!(poly_a + poly_b, expected_result);
 
@@ -314,12 +314,11 @@ mod tests {
 
         use crate::poly::poly_ff::Polyff;
         use crate::zn::Zn;
-        use crate::traits::{One,Inv};
 
         #[test]
         fn poly_ff_eval(){
     
-            let poly = Polyff{coeff:Zn::into_Zn(vec![4,1,7], 13)};
+            let poly = Polyff{coeff:Zn::from_vec(vec![4,1,7], 13)};
     
             let a = Zn{ nb: 3, n:13};
     
@@ -330,17 +329,17 @@ mod tests {
         fn poly_ff_add() {
 
 
-            let poly_a = Polyff{coeff: Zn::into_Zn(vec![5,1,7], 13)};
-            let poly_b = Polyff{coeff: Zn::into_Zn(vec![11,1,6], 13)};
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![5,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,6], 13)};
 
-            let expected_result = Polyff{coeff:Zn::into_Zn(vec![3,2], 13)};
+            let expected_result = Polyff{coeff:Zn::from_vec(vec![3,2], 13)};
 
             assert_eq!(poly_a + poly_b, expected_result);
 
-            let poly_a = Polyff{coeff: Zn::into_Zn(vec![5,1,7], 13)};
-            let poly_b = Polyff{coeff: Zn::into_Zn(vec![8,12,6], 13)};
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![5,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![8,12,6], 13)};
 
-            let expected_result = Polyff{coeff:Zn::into_Zn(vec![0], 13)};
+            let expected_result = Polyff{coeff:Zn::from_vec(vec![0], 13)};
 
             assert_eq!(poly_a + poly_b, expected_result);
 
@@ -349,11 +348,11 @@ mod tests {
         #[test]
     fn poly_ff_mul() {
         
-        let poly_a = Polyff{coeff: Zn::into_Zn(vec![4,1,7], 13)};
-        let poly_b = Polyff{coeff: Zn::into_Zn(vec![11,1,6], 13)};
+        let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+        let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,6], 13)};
 
 
-        let expected_result = Polyff{coeff:Zn::into_Zn(vec![5,2,11,0,3], 13)};
+        let expected_result = Polyff{coeff:Zn::from_vec(vec![5,2,11,0,3], 13)};
 
         assert_eq!(poly_a * poly_b, expected_result);
     }
@@ -361,29 +360,29 @@ mod tests {
     #[test]
     fn poly_ff_rem(){
 
-        let poly_a = Polyff{coeff: Zn::into_Zn(vec![4,1,7], 13)};
-        let poly_b = Polyff{coeff: Zn::into_Zn(vec![11,1,6], 13)};
+        let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+        let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,6], 13)};
 
 
-        let expected_result = Polyff{coeff:Zn::into_Zn(vec![2,2], 13)};
-
-
-        assert_eq!(poly_a % poly_b, expected_result);
-
-        let poly_a = Polyff{coeff: Zn::into_Zn(vec![4,1,7], 13)};
-        let poly_b = Polyff{coeff: Zn::into_Zn(vec![11,1,1,1], 13)};
-
-
-        let expected_result = Polyff{coeff:Zn::into_Zn(vec![4,1,7], 13)};
+        let expected_result = Polyff{coeff:Zn::from_vec(vec![2,2], 13)};
 
 
         assert_eq!(poly_a % poly_b, expected_result);
 
-        let poly_a = Polyff{coeff: Zn::into_Zn(vec![4,1,7,5,1], 13)};
-        let poly_b = Polyff{coeff: Zn::into_Zn(vec![1,0,1], 13)};
+        let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+        let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,1,1], 13)};
 
 
-        let expected_result = Polyff{coeff:Zn::into_Zn(vec![11,9], 13)};
+        let expected_result = Polyff{coeff:Zn::from_vec(vec![4,1,7], 13)};
+
+
+        assert_eq!(poly_a % poly_b, expected_result);
+
+        let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7,5,1], 13)};
+        let poly_b = Polyff{coeff: Zn::from_vec(vec![1,0,1], 13)};
+
+
+        let expected_result = Polyff{coeff:Zn::from_vec(vec![11,9], 13)};
 
 
         assert_eq!(poly_a % poly_b, expected_result);
@@ -394,9 +393,133 @@ mod tests {
     }
  
 
+    mod fe_test{
+        use crate::{field_extension::FieldExtension, zn::Zn, traits::{Inv, Card, One, Zero, Pow}, poly::poly_ff::Polyff};
+
+
+        #[test]
+        fn fe_new_test(){
+    
+            let x = FieldExtension::new_from_vec(
+                Zn::from_vec(vec![1,5,3,2], 3),
+                Zn::from_vec(vec![1,1,2],3)
+                );
+    
+            assert_eq!(Zn::into_i32(x.nb.coeff),vec![0]);
+
+            let x = FieldExtension::new_from_vec(
+                Zn::from_vec(vec![1,5,4,2], 3),
+                Zn::from_vec(vec![1,1,2],3)
+                );
+    
+            assert_eq!(Zn::into_i32(x.nb.coeff),vec![1,1]);
+        }
+
+        #[test]
+        fn fe_add_same_field(){
+            let x = FieldExtension::new_from_vec(
+                Zn::from_vec(vec![2,4], 5),
+                Zn::from_vec(vec![1,1,2],5)
+                );
+    
+
+            let y = FieldExtension::new_from_vec(
+                Zn::from_vec(vec![1,1], 5),
+                Zn::from_vec(vec![1,1,2],5)
+                );
+    
+            assert_eq!(Zn::into_i32((x + y).nb.coeff),vec![3]);
+
+        }
+
+        #[test]
+        fn fe_mul_same_field(){
+            let x = FieldExtension::new_from_vec(
+                Zn::from_vec(vec![2,4], 5),
+                Zn::from_vec(vec![1,1,2],5)
+                );
+    
+
+            let y = FieldExtension::new_from_vec(
+                Zn::from_vec(vec![1,1], 5),
+                Zn::from_vec(vec![1,1,2],5)
+                );
+    
+            assert_eq!(Zn::into_i32((x * y).nb.coeff),vec![0,4]);
+
+        }
+
+        #[test]
+        fn fe_inv(){
+            let x = FieldExtension::new_from_vec(
+                Zn::from_vec(vec![2,4], 5),
+                Zn::from_vec(vec![1,1,2],5)
+            );
+            println!("{}",x.get_card());
+
+            let y = x.inv();
+
+            assert_eq!(Zn::into_i32((x * y).nb.coeff),vec![1]);
+        }
+
+        #[test]
+        fn fe_of_fe(){
+
+            let alpha = FieldExtension::new_from_vec( //alpha is such that alpha^2 == alpha + 1
+                Zn::from_vec(vec![0,1], 2),
+                Zn::from_vec(vec![1,1,1],2)
+            );
+
+            assert_eq!(alpha.pow(3),alpha.one());
+
+            let a2:FieldExtension<FieldExtension<Zn>> = FieldExtension::new_from_vec(
+                vec![alpha.zero(),alpha.one()],
+                vec![alpha.one(), alpha.clone(), alpha.one()]
+            );
+
+
+            assert_eq!(a2.pow(15).nb.coeff, a2.one().nb.coeff)
+
+        }
+        
+    }
+    use crate::poly::poly_ff::Polyff;
+    use crate::zn::Zn;
+    use crate::traits::{Pow,Inv};
+
     #[test]
     fn test(){
-        println!();
+
+        println!("{}",Zn{nb:0,n:3}.pow(2).nb);
+
+        let mut a = Polyff{coeff: Zn::from_vec(vec![1,5,4,2], 3)};
+        let b = Polyff{coeff: Zn::from_vec(vec![1,1,2],3)};
+        let pivot = b.coeff.last().unwrap().inv() * (-1);
+        println!("pivot{}",pivot.nb);
+
+        let diff = a.get_deg()-b.get_deg();
+        
+        // for i in 0..(diff+1){
+            
+        //     a = a.clone() + (b.times_x_to_the(diff - i) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
+        //     println!("{:?}",a.coeff);
+        // }
+
+        while a.get_deg() >= b.get_deg() {
+            a = a.clone() + (b.times_x_to_the(a.get_deg() - b.get_deg()) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
+            
+        }
+
+
+        // assert_eq!(
+        // a,
+        // Polyff { coeff: Zn::from_vec(vec![2,2], 3) }
+        // )
+
+        // assert_eq!(
+        // Polyff { coeff: Zn::from_vec(vec![1,2,1,2], 3) } %  Polyff { coeff: Zn::from_vec(vec![1,1,2],3) },
+        // Polyff { coeff: Zn::from_vec(vec![2,2], 3) }
+        // )
     }
 
 

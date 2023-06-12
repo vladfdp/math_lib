@@ -42,7 +42,7 @@ impl<T: Clone + One + Mul + Mul<Output = T>> Pow for T {
                 ans = ans * x.clone();
             }
             x = x.clone() * x;
-            k = k/2;
+            k /= 2;
             }
         ans
     }
@@ -56,5 +56,9 @@ pub trait Inv{
     fn inv(&self)->Self;
 }
 
-pub trait Field: Ring + Inv{}
-impl<T: Ring + Inv> Field for T {}
+pub trait Card {
+    fn get_card(&self)-> usize;
+}
+
+pub trait Field: Ring + Inv + Card{}
+impl<T: Ring + Inv + Card> Field for T {}

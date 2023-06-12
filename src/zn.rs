@@ -1,5 +1,5 @@
 use std::ops::{Mul,Add};
-use crate::traits::{One, Zero, Pow, Inv};
+use crate::traits::{One, Zero, Pow, Inv, Card};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Zn{ //ring Z/nZ, if n prime we get a field
@@ -10,12 +10,12 @@ pub struct Zn{ //ring Z/nZ, if n prime we get a field
 impl Add for Zn{
     type Output = Zn;
 
-    fn add(self, other: Zn) -> Zn{
-        if self.n != other.n {
-            panic!("operands don't belong to the same ring Z{} and Z{}",self.n,other.n);        
+    fn add(self, rhs: Zn) -> Zn{
+        if self.n != rhs.n {
+            panic!("operands don't belong to the same ring Z{} and Z{}",self.n,rhs.n);        
         }
         Zn {
-            nb: (self.nb + other.nb) % self.n,
+            nb: (self.nb + rhs.nb) % self.n,
             n: self.n
         }
     }
@@ -24,12 +24,12 @@ impl Add for Zn{
 impl Mul for Zn{
     type Output = Zn;
 
-    fn mul(self, other: Zn) -> Zn{
-        if self.n != other.n {
-            panic!("operands don't belong to the same ring Z{} and Z{}",self.n,other.n);
+    fn mul(self, rhs: Zn) -> Zn{
+        if self.n != rhs.n {
+            panic!("operands don't belong to the same ring Z{} and Z{}",self.n,rhs.n);
         }
         Zn {
-            nb: (self.nb * other.nb) % self.n,
+            nb: (self.nb * rhs.nb) % self.n,
             n: self.n
         }
     }
@@ -45,7 +45,7 @@ impl Mul<i32> for Zn{
         }
 
         Zn {
-            nb: nb,
+            nb,
             n: self.n
         }
     }
@@ -62,16 +62,29 @@ impl Zero for Zn{
     }
 }
 
-impl Inv for Zn{
+impl Inv for Zn{ //works only if self.n is prime
     fn inv(&self)->Zn{self.pow((self.n-2).try_into().unwrap())}
 }
-
+impl Card for Zn {
+    fn get_card(&self)-> usize {
+        self.n.try_into().unwrap()
+    }
+}
 
 impl Zn {
-    pub fn into_Zn(vec: Vec<i32>,n:i32)-> Vec<Zn>{
+    pub fn from_vec(vec: Vec<i32>,n:i32)-> Vec<Zn>{
         let mut ans:Vec<Zn> = Vec::new();
         for i in  vec{
-            ans.push(Zn { nb: i % n, n: n });
+            ans.push(Zn { nb: i % n,  n });
+        }
+        ans
+        
+    }
+
+    pub fn into_i32(vec: Vec<Zn>)-> Vec<i32> {
+        let mut ans:Vec<i32> = Vec::new();
+        for i in  vec{
+            ans.push(i.nb);
         }
         ans
     }

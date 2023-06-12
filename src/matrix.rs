@@ -49,13 +49,13 @@ impl Matrix{                // get an element of the Matrix, a line or a column 
 impl Add for Matrix{
     type Output = Matrix;
 
-    fn add(self, other: Matrix) -> Matrix{
-        if self.n != other.n {
-            panic!("Matrices are not the same size {} and {}",self.n,other.n);
+    fn add(self, rhs: Matrix) -> Matrix{
+        if self.n != rhs.n {
+            panic!("Matrices are not the same size {} and {}",self.n,rhs.n);
         }
         Matrix::new(
         self.coeff.iter()
-        .zip(other.coeff.iter())
+        .zip(rhs.coeff.iter())
         .map(|(x,y)|x+y).collect(),
         self.n)
     }
@@ -64,16 +64,16 @@ impl Add for Matrix{
 impl Mul for Matrix{
     type Output = Matrix;
 
-    fn mul(self, other: Matrix) -> Matrix{
-        if self.n != other.n {
-            panic!("Matrices are not the same size {} and {}",self.n,other.n);
+    fn mul(self, rhs: Matrix) -> Matrix{
+        if self.n != rhs.n {
+            panic!("Matrices are not the same size {} and {}",self.n,rhs.n);
         }
         let mut ans = Vec::new();
         for i in 0..self.n{
             for j in 0..self.n{
 
             ans.push(self.get_lin(i).iter()
-            .zip(other.get_col(j).iter())
+            .zip(rhs.get_col(j).iter())
             .map(|(x, y)| x*y)
             .sum());
            }

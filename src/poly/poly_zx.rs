@@ -37,10 +37,10 @@ impl Add for PolyZx{
 
     
 
-    fn add(self, other:PolyZx)-> PolyZx{
+    fn add(self, rhs:PolyZx)-> PolyZx{
 
         let mut a = self.coeff;
-        let mut b = other.coeff;
+        let mut b = rhs.coeff;
 
         while a.len()>b.len() { //we make a and b the same size
             b.push(0);
@@ -62,13 +62,13 @@ impl Mul for PolyZx{
 
     
 
-    fn mul(self, other:PolyZx)-> PolyZx{
+    fn mul(self, rhs:PolyZx)-> PolyZx{
 
-        let mut ans = vec![0;self.coeff.len()+other.coeff.len()-1];
+        let mut ans = vec![0;self.coeff.len()+rhs.coeff.len()-1];
 
         for i in 0..self.coeff.len(){
-            for j in 0..other.coeff.len(){
-                ans[i+j] += self.coeff[i] * other.coeff[j];   
+            for j in 0..rhs.coeff.len(){
+                ans[i+j] += self.coeff[i] * rhs.coeff[j];   
             }
         }
         PolyZx{ coeff: ans }
