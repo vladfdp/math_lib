@@ -1,4 +1,4 @@
-use std::ops::{Mul,Add};
+use std::ops::{Mul,Add, Sub, Neg};
 use crate::traits::{One, Zero, Pow, Inv, Card};
 
 #[derive(Debug, PartialEq, Clone)]
@@ -62,6 +62,23 @@ impl Zero for Zn{
     }
 }
 
+impl Neg for Zn{
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        self * -1
+    }
+    
+}
+
+impl Sub for Zn{
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        self + (-rhs)
+    }
+}
+
 impl Inv for Zn{ //works only if self.n is prime
     fn inv(&self)->Zn{self.pow((self.n-2).try_into().unwrap())}
 }
@@ -72,7 +89,7 @@ impl Card for Zn {
 }
 
 impl Zn {
-    pub fn from_vec(vec: Vec<i32>,n:i32)-> Vec<Zn>{
+    pub fn from_vec(vec: Vec<i32>,n:i32)-> Vec<Zn>{ // get a vec of Zn from a vec<i32> and n
         let mut ans:Vec<Zn> = Vec::new();
         for i in  vec{
             ans.push(Zn { nb: i % n,  n });
@@ -81,7 +98,7 @@ impl Zn {
         
     }
 
-    pub fn into_i32(vec: Vec<Zn>)-> Vec<i32> {
+    pub fn into_i32(vec: Vec<Zn>)-> Vec<i32> {  // get a vec of int from a vec<Zn>
         let mut ans:Vec<i32> = Vec::new();
         for i in  vec{
             ans.push(i.nb);

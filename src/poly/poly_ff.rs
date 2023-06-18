@@ -1,5 +1,5 @@
 use crate::traits::Field;
-use std::ops::{Mul,Add,Rem};
+use std::ops::{Mul,Add, Sub,Rem, Neg};
 use crate::traits::{One,Zero,Inv};
 use std::convert::TryInto;
 
@@ -70,6 +70,14 @@ impl<T:Field> Add for Polyff<T>{
     }
 }
 
+impl<T:Field> Sub for Polyff<T>{
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        self + (-rhs)
+    }
+}
+
 impl<T:Field> Mul for Polyff<T> {
     type Output = Polyff<T>;
     fn mul(self, rhs: Polyff<T>) -> Polyff<T> {
@@ -134,14 +142,20 @@ impl<T:Field> Rem for Polyff<T>{
         let mut a = self;
         let b = rhs;
         let pivot = b.coeff.last().unwrap().inv() * (-1);
-
-        let diff = a.get_deg()-b.get_deg();
         
         while a.get_deg() >= b.get_deg() {
             a = a.clone() + (b.times_x_to_the(a.get_deg() - b.get_deg()) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
-            
+            a = a.rm_trailing_zeros();
         }
         a
+    }
+    
+}
+impl<T:Field> Neg for Polyff<T>{
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        self * -1
     }
     
 }

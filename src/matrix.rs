@@ -1,4 +1,4 @@
-use std::ops::{Mul,Add};
+use std::ops::{Mul,Add, Sub, Neg};
 use crate::traits::{One,Zero};
 
 #[derive(Debug, PartialEq, Clone)]
@@ -58,6 +58,14 @@ impl Add for Matrix{
         .zip(rhs.coeff.iter())
         .map(|(x,y)|x+y).collect(),
         self.n)
+    }
+}
+
+impl Sub for Matrix{
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        self + (-rhs)
     }
 }
 
@@ -121,3 +129,11 @@ impl Zero for Matrix{
     }
 }
 
+impl Neg for Matrix{
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        self * -1
+    }
+    
+}

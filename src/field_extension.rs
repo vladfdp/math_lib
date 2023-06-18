@@ -1,5 +1,5 @@
 use crate::traits::{Field, Pow};
-use std::ops::{Mul,Add};
+use std::ops::{Mul,Add, Sub, Neg};
 use crate::poly::poly_ff::Polyff;
 use crate::traits::{One, Zero, Inv, Card};
 
@@ -20,6 +20,14 @@ impl<T:Field> Add for FieldExtension<T>{
             nb: (self.nb + rhs.nb) % self.poly.clone(),
             poly: self.poly
         }
+    }
+}
+
+impl<T:Field> Sub for FieldExtension<T>{
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        self + (-rhs)
     }
 }
 
@@ -46,6 +54,15 @@ impl<T:Field> Mul<i32> for FieldExtension<T>{
             poly: self.poly
         }
     }
+}
+
+impl<T:Field> Neg for FieldExtension<T>{
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        self * -1
+    }
+    
 }
 
 impl<T:Field> One for FieldExtension<T>{

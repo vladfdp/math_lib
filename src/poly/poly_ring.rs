@@ -1,5 +1,5 @@
 use crate::traits::Ring;
-use std::ops::{Mul,Add};
+use std::ops::{Mul,Add, Sub, Neg};
 use crate::traits::{One,Zero};
 use std::convert::TryInto;
 
@@ -57,6 +57,14 @@ impl<T:Ring> Add for Poly<T>{
     }
 }
 
+impl<T:Ring> Sub for Poly<T>{
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        self + (-rhs)
+    }
+}
+
 impl<T:Ring> Mul for Poly<T> {
     type Output = Poly<T>;
     fn mul(self, rhs: Poly<T>) -> Poly<T> {
@@ -84,6 +92,7 @@ impl<T:Ring> Mul<T> for Poly<T> {
     
 }
 
+
 impl<T:Ring> Zero for Poly<T>  {
     fn zero(&self)->Poly<T>{
         Poly { coeff: vec![self.coeff[0].zero()]}
@@ -98,4 +107,18 @@ impl<T:Ring> One for Poly<T>  {
     fn one(&self)->Poly<T>{
         Poly { coeff: vec![self.coeff[0].one()]}
     }
+}
+
+impl<T:Ring> Neg for Poly<T>{
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Poly{ coeff: self.coeff.iter()
+            .map(|x| x.clone() * -1)
+            .collect() }
+            
+            
+        
+    }
+    
 }

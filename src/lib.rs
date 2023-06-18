@@ -483,43 +483,23 @@ mod tests {
         }
         
     }
+    
+    
+    mod ec_test{
+        
+    }
+    
+    
     use crate::poly::poly_ff::Polyff;
     use crate::zn::Zn;
     use crate::traits::{Pow,Inv};
 
+
+
     #[test]
     fn test(){
 
-        println!("{}",Zn{nb:0,n:3}.pow(2).nb);
-
-        let mut a = Polyff{coeff: Zn::from_vec(vec![1,5,4,2], 3)};
-        let b = Polyff{coeff: Zn::from_vec(vec![1,1,2],3)};
-        let pivot = b.coeff.last().unwrap().inv() * (-1);
-        println!("pivot{}",pivot.nb);
-
-        let diff = a.get_deg()-b.get_deg();
-        
-        // for i in 0..(diff+1){
-            
-        //     a = a.clone() + (b.times_x_to_the(diff - i) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
-        //     println!("{:?}",a.coeff);
-        // }
-
-        while a.get_deg() >= b.get_deg() {
-            a = a.clone() + (b.times_x_to_the(a.get_deg() - b.get_deg()) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
-            
-        }
-
-
-        // assert_eq!(
-        // a,
-        // Polyff { coeff: Zn::from_vec(vec![2,2], 3) }
-        // )
-
-        // assert_eq!(
-        // Polyff { coeff: Zn::from_vec(vec![1,2,1,2], 3) } %  Polyff { coeff: Zn::from_vec(vec![1,1,2],3) },
-        // Polyff { coeff: Zn::from_vec(vec![2,2], 3) }
-        // )
+       
     }
 
 

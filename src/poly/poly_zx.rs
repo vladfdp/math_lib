@@ -1,5 +1,5 @@
 use crate::traits::Ring;
-use std::ops::{Mul,Add};
+use std::ops::{Mul,Add, Sub, Neg};
 use crate::traits::{One,Zero};
 use std::convert::TryInto;
 
@@ -57,6 +57,14 @@ impl Add for PolyZx{
     }
 }
 
+impl Sub for PolyZx{
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        self + (-rhs)
+    }
+}
+
 impl Mul for PolyZx{
     type Output = PolyZx;
 
@@ -101,6 +109,15 @@ impl Zero for PolyZx {
 impl One for PolyZx {
     fn one(&self)-> PolyZx{
         PolyZx{coeff:vec![1]}
+    }
+    
+}
+
+impl Neg for PolyZx{
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        self * -1
     }
     
 }

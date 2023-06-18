@@ -1,5 +1,5 @@
 
-use std::ops::{Add,Mul};
+use std::ops::{Add, Sub,Mul, Neg, Div};
 use std::fmt::Debug;
 use std::cmp::PartialEq;
 
@@ -28,7 +28,6 @@ impl Zero for i32 { //makes i32 a Ring
 }
 
 
-
 pub trait Pow: Clone + One + Mul + Mul<Output = Self>{
     fn pow(&self, n:u32)-> Self;
 }
@@ -49,8 +48,8 @@ impl<T: Clone + One + Mul + Mul<Output = T>> Pow for T {
 }
 
 
-pub trait Ring: PartialEq + Debug + Pow + Mul<i32, Output = Self> + Zero + Add  +Add<Output = Self> {}
-impl<T: PartialEq + Debug + Pow + Mul<i32, Output = T> + Zero + Add  + Add<Output = T>> Ring for T {}
+pub trait Ring: PartialEq + Debug + Pow + Mul<i32, Output = Self> + Zero + Add + Sub +Add<Output= Self> + Neg{}
+impl<T: PartialEq + Debug + Pow + Mul<i32, Output = T> + Zero + Add + Sub + Add<Output = T> + Neg> Ring for T {}
 
 pub trait Inv{
     fn inv(&self)->Self;
@@ -61,4 +60,5 @@ pub trait Card {
 }
 
 pub trait Field: Ring + Inv + Card{}
-impl<T: Ring + Inv + Card> Field for T {}
+impl<T: Ring + Inv +  Card> Field for T {}
+
