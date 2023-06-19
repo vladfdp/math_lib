@@ -59,6 +59,6 @@ pub trait Card {
     fn get_card(&self)-> usize;
 }
 
-pub trait Field: Ring + Inv + Card{}
-impl<T: Ring + Inv +  Card> Field for T {}
+pub trait Field: Ring + Inv + Div + Card{}
+impl<T: Ring + Inv + Div + Card> Field for T {}
 

@@ -1,5 +1,5 @@
 use crate::traits::Field;
-use std::ops::{Mul,Add, Sub,Rem, Neg};
+use std::ops::{Mul,Add, Sub,Rem, Neg, Div};
 use crate::traits::{One,Zero,Inv};
 use std::convert::TryInto;
 
@@ -41,14 +41,12 @@ where
     pub fn new_from_vec(coeff:Vec<T>) -> Polyff<T>{
         Polyff{
             coeff
-        }
+        }.rm_trailing_zeros()
     }
 }
 
 impl<T:Field> Add for Polyff<T>{
     type Output = Polyff<T>;
-
-    
 
     fn add(self, rhs:Self)-> Self{
 
@@ -130,6 +128,38 @@ impl<T:Field> One for Polyff<T>  {
     }
 }
 
+impl<T:Field> Div for Polyff<T>{
+    type Output = Polyff<T>;
+
+    fn div(self, rhs: Self) -> Self::Output {
+
+        if rhs.get_deg() > self.get_deg(){
+            return self.zero();
+        }
+        if rhs.is_zero(){
+            panic!("Can't divide by zero");
+        }
+        
+        let mut ans = vec![self.coeff[0].zero(); self.get_deg() - rhs.get_deg() + 1];
+        let mut a = self;
+        let b = rhs;
+        let pivot = b.coeff.last().unwrap().inv();
+        
+        
+        while a.get_deg() >= b.get_deg() {
+
+            let x = pivot.clone() * a.coeff.last().unwrap().clone();
+            ans[a.get_deg() - b.get_deg()] = x.clone();
+            a = a.clone() - (b.times_x_to_the(a.get_deg() - b.get_deg()) * x );
+            a = a.rm_trailing_zeros();
+        }
+        Polyff{
+            coeff:ans
+        }
+    }
+    
+}
+
 impl<T:Field> Rem for Polyff<T>{
     type Output = Polyff<T>;
 
@@ -138,13 +168,16 @@ impl<T:Field> Rem for Polyff<T>{
         if rhs.get_deg() > self.get_deg(){
             return self;
         }
+        if rhs.is_zero(){
+            panic!("Can't divide by zero");
+        }
         
         let mut a = self;
         let b = rhs;
-        let pivot = b.coeff.last().unwrap().inv() * (-1);
+        let pivot = b.coeff.last().unwrap().inv();
         
         while a.get_deg() >= b.get_deg() {
-            a = a.clone() + (b.times_x_to_the(a.get_deg() - b.get_deg()) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
+            a = a.clone() - (b.times_x_to_the(a.get_deg() - b.get_deg()) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
             a = a.rm_trailing_zeros();
         }
         a

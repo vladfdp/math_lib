@@ -1,4 +1,4 @@
-use std::ops::{Mul,Add, Sub, Neg};
+use std::ops::{Mul,Add, Sub, Neg, Div};
 use crate::traits::{One, Zero, Pow, Inv, Card};
 
 #[derive(Debug, PartialEq, Clone)]
@@ -82,6 +82,14 @@ impl Sub for Zn{
 impl Inv for Zn{ //works only if self.n is prime
     fn inv(&self)->Zn{self.pow((self.n-2).try_into().unwrap())}
 }
+
+impl Div for Zn{
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self::Output {
+        self * rhs.inv()
+    }
+}
+
 impl Card for Zn {
     fn get_card(&self)-> usize {
         self.n.try_into().unwrap()

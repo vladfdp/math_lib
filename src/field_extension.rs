@@ -1,5 +1,5 @@
 use crate::traits::{Field, Pow};
-use std::ops::{Mul,Add, Sub, Neg};
+use std::ops::{Mul,Add, Sub, Neg, Div};
 use crate::poly::poly_ff::Polyff;
 use crate::traits::{One, Zero, Inv, Card};
 
@@ -82,9 +82,16 @@ impl<T:Field> Zero for FieldExtension<T>{
     }
 }
 
-impl<T:Field> Inv for FieldExtension<T>{
+impl<T:Field> Inv for FieldExtension<T>{ //TODO! : make this better
     fn inv(&self)->FieldExtension<T>{
         self.pow((self.get_card()-2).try_into().unwrap())
+    }
+}
+
+impl<T:Field> Div for FieldExtension<T>{
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self::Output {
+        self * rhs.inv()
     }
 }
 

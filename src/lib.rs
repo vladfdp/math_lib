@@ -346,52 +346,113 @@ mod tests {
         }
     
         #[test]
-    fn poly_ff_mul() {
-        
-        let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
-        let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,6], 13)};
+        fn poly_ff_mul() {
+            
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,6], 13)};
 
 
-        let expected_result = Polyff{coeff:Zn::from_vec(vec![5,2,11,0,3], 13)};
+            let expected_result = Polyff{coeff:Zn::from_vec(vec![5,2,11,0,3], 13)};
 
-        assert_eq!(poly_a * poly_b, expected_result);
-    }
+            assert_eq!(poly_a * poly_b, expected_result);
+        }
 
-    #[test]
-    fn poly_ff_rem(){
+        #[test]
+        fn poly_ff_rem(){
 
-        let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
-        let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,6], 13)};
-
-
-        let expected_result = Polyff{coeff:Zn::from_vec(vec![2,2], 13)};
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,6], 13)};
 
 
-        assert_eq!(poly_a % poly_b, expected_result);
-
-        let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
-        let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,1,1], 13)};
+            let expected_result = Polyff{coeff:Zn::from_vec(vec![2,2], 13)};
 
 
-        let expected_result = Polyff{coeff:Zn::from_vec(vec![4,1,7], 13)};
+            assert_eq!(poly_a % poly_b, expected_result);
+
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,1,1], 13)};
 
 
-        assert_eq!(poly_a % poly_b, expected_result);
-
-        let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7,5,1], 13)};
-        let poly_b = Polyff{coeff: Zn::from_vec(vec![1,0,1], 13)};
+            let expected_result = Polyff{coeff:Zn::from_vec(vec![4,1,7], 13)};
 
 
-        let expected_result = Polyff{coeff:Zn::from_vec(vec![11,9], 13)};
+            assert_eq!(poly_a % poly_b, expected_result);
+
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7,5,1], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![1,0,1], 13)};  //1,0,1
 
 
-        assert_eq!(poly_a % poly_b, expected_result);
+            let expected_result = Polyff{coeff:Zn::from_vec(vec![11,9], 13)};
 
-    }
 
+            assert_eq!(poly_a % poly_b, expected_result);
+
+        }
+
+
+        #[test]
+        #[should_panic]
+        fn poly_ff_rem_0(){
+
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![0], 13)};
+
+
+            let _ = poly_a % poly_b;
+
+        }
+        #[test]
+        fn poly_ff_div(){
+
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,6], 13)};
+
+
+            let expected_result = Polyff{coeff:Zn::from_vec(vec![12], 13)};
+
+            assert_eq!(poly_a / poly_b, expected_result);
+            
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![11,1,1,1], 13)};
+
+
+            let expected_result = Polyff{coeff:Zn::from_vec(vec![0], 13)};
+
+            assert_eq!(poly_a / poly_b, expected_result);
+
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7,5,1], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![1,0,1], 13)};  //1,0,1
+
+
+            let expected_result = Polyff{coeff:Zn::from_vec(vec![6,5,1], 13)};
+
+
+            assert_eq!(poly_a / poly_b, expected_result);
+
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7,5,1], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![1,0,1], 13)};  //1,0,1
+
+            assert_eq!((poly_a.clone() / poly_b.clone()) * poly_b.clone() + (poly_a.clone() % poly_b), poly_a);
+
+
+            
+        }
+
+        #[test]
+        #[should_panic]
+        fn poly_ff_div_0(){
+
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![4,1,7], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![0], 13)};
+
+
+            let _ = poly_a / poly_b;
+
+        }
 
     }
  
+    
 
     mod fe_test{
         use crate::{field_extension::FieldExtension, zn::Zn, traits::{Inv, Card, One, Zero, Pow}, poly::poly_ff::Polyff};
@@ -486,7 +547,7 @@ mod tests {
     
     
     mod ec_test{
-        
+
     }
     
     
