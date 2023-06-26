@@ -91,8 +91,11 @@ impl Div for Zn{
 }
 
 impl Card for Zn {
-    fn get_card(&self)-> usize {
-        self.n.try_into().unwrap()
+    fn get_card(&self)-> i32 {
+        self.n
+    }
+    fn get_char(&self)-> i32 {
+        self.n
     }
 }
 
@@ -100,7 +103,7 @@ impl Zn {
     pub fn from_vec(vec: Vec<i32>,n:i32)-> Vec<Zn>{ // get a vec of Zn from a vec<i32> and n
         let mut ans:Vec<Zn> = Vec::new();
         for i in  vec{
-            ans.push(Zn { nb: i % n,  n });
+            ans.push(Zn::new(i, n));
         }
         ans
         
@@ -112,6 +115,18 @@ impl Zn {
             ans.push(i.nb);
         }
         ans
+    }
+
+    pub fn new(x:i32,n:i32)-> Zn{
+        let mut nb = x % n;
+        if nb < 0{
+            nb += n;
+        }
+
+        Zn {
+            nb,
+            n
+        }
     }
 
 

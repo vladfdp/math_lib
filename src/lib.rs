@@ -3,6 +3,7 @@ mod matrix;
 mod traits;
 mod poly;
 mod field_extension;
+mod elliptic_curve;
 
 
 
@@ -452,8 +453,6 @@ mod tests {
 
     }
  
-    
-
     mod fe_test{
         use crate::{field_extension::FieldExtension, zn::Zn, traits::{Inv, Card, One, Zero, Pow}, poly::poly_ff::Polyff};
 
@@ -547,6 +546,49 @@ mod tests {
     
     
     mod ec_test{
+
+        use crate::elliptic_curve::{EllipticCurve,EllipticCurvePoint,ECPoint};
+        use crate::zn::Zn;
+
+
+
+        #[test]
+        fn ec_is_on_curve(){
+
+            let ec = EllipticCurve::new(Zn::new(8, 13),Zn::new(8, 13));
+
+            let pt = ECPoint::Point{x:Zn::new(11,13),y:Zn::new(7, 13)};
+
+            assert!(ec.is_on_curve(&pt));
+        }
+
+        #[test]
+        fn ec_add_point(){
+
+            let ec = EllipticCurve::new(Zn::new(1, 5),Zn::new(1, 5));
+
+            let x = ec.new_point(Zn::new(0, 5),Zn::new(1, 5));
+            let y = ec.new_point(Zn::new(4, 5),Zn::new(2, 5));
+
+            let expected_result = ec.new_point(Zn::new(2, 5),Zn::new(1, 5));
+
+            assert_eq!(x + y, expected_result);
+
+        }
+
+        #[test]
+        #[should_panic]
+        fn ec_add_diff_curve(){
+            
+            let ec1 = EllipticCurve::new(Zn::new(1, 5),Zn::new(1, 5));
+            let ec2 = EllipticCurve::new(Zn::new(8, 13),Zn::new(8, 13));
+
+            let x = ec1.new_point(Zn::new(0, 5),Zn::new(1, 5));
+            let y = ec2.new_point(Zn::new(11, 13),Zn::new(7, 13));
+
+            let _= x + y;
+        }
+
 
     }
     

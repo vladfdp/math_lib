@@ -17,8 +17,8 @@ impl Matrix{                // get an element of the Matrix, a line or a column 
             panic!("cannot get line {} as matrix is size {}",i ,self.n);
         }
         let mut ans: Vec<i32> = Vec::new();
-        for k in 0..self.n{
-            ans.push(self.coeff[i*self.n + k]);
+        for j in 0..self.n{
+            ans.push(self.get(i, j));
         }    
         ans
     }
@@ -28,8 +28,8 @@ impl Matrix{                // get an element of the Matrix, a line or a column 
             panic!("cannot get column {} as matrix is size {}",j ,self.n);
         }
         let mut ans: Vec<i32> = Vec::new();
-        for k in 0..self.n{
-            ans.push(self.coeff[k*self.n + j]);
+        for i in 0..self.n{
+            ans.push(self.get(i, j));
         }
         ans
     }

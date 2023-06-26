@@ -96,8 +96,11 @@ impl<T:Field> Div for FieldExtension<T>{
 }
 
 impl<T:Field> Card for FieldExtension<T> {
-    fn get_card(&self)-> usize {
+    fn get_card(&self)-> i32 {
         self.nb.coeff[0].get_card().pow(self.poly.get_deg().try_into().unwrap())
+    }
+    fn get_char(&self)-> i32 {
+        self.nb.coeff[0].get_char()
     }
 }
 

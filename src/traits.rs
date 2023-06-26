@@ -31,7 +31,7 @@ impl Zero for i32 { //makes i32 a Ring
 pub trait Pow: Clone + One + Mul + Mul<Output = Self>{
     fn pow(&self, n:u32)-> Self;
 }
-impl<T: Clone + One + Mul + Mul<Output = T>> Pow for T {
+impl<T: Clone + One + Mul + Mul<Output = Self>> Pow for T {
     fn pow(&self, n:u32)-> T{
         let mut x = self.clone();
         let mut k = n;
@@ -48,17 +48,20 @@ impl<T: Clone + One + Mul + Mul<Output = T>> Pow for T {
 }
 
 
-pub trait Ring: PartialEq + Debug + Pow + Mul<i32, Output = Self> + Zero + Add + Sub +Add<Output= Self> + Neg{}
-impl<T: PartialEq + Debug + Pow + Mul<i32, Output = T> + Zero + Add + Sub + Add<Output = T> + Neg> Ring for T {}
+pub trait Ring: PartialEq + Debug + Pow + Mul<i32, Output = Self> + Zero + Add + Sub<Output = Self> +Add<Output= Self> + Neg<Output = Self>{}
+impl<T: PartialEq + Debug + Pow + Mul<i32, Output = T> + Zero + Add + Sub<Output = Self> + Add<Output = T> + Neg<Output = Self>> Ring for T {}
 
 pub trait Inv{
     fn inv(&self)->Self;
 }
 
 pub trait Card {
-    fn get_card(&self)-> usize;
+    fn get_card(&self)-> i32;
+    fn get_char(&self)-> i32;
 }
 
-pub trait Field: Ring + Inv + Div + Card{}
-impl<T: Ring + Inv + Div + Card> Field for T {}
+
+
+pub trait Field: Ring + Inv + Div<Output = Self> + Card{}
+impl<T: Ring + Inv + Div<Output = Self> + Card > Field for T {}
 
