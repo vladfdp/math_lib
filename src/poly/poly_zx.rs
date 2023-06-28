@@ -101,7 +101,7 @@ impl Zero for PolyZx {
         PolyZx{coeff:vec![0]}
     }
     fn is_zero(&self)-> bool {
-        self.coeff.len() == 1 && self.coeff[0].is_zero()
+        self.coeff.len() == 1 && self.coeff[0] == 0
     }
     
 }

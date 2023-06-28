@@ -1,5 +1,6 @@
 mod zn;
-mod matrix;
+mod matrix_z;
+mod matrix_ring;
 mod traits;
 mod poly;
 mod field_extension;
@@ -14,10 +15,6 @@ mod tests {
 
     //use std::convert::TryInto;
     //use std::ops::{Add,Mul};
-
-
-    
-
 
     mod zn_tests{
 
@@ -93,82 +90,142 @@ mod tests {
     }
     }
 
-    mod matrix_test{
+    mod matrix_z_test{
 
-        use crate::matrix::Matrix;
+        use crate::matrix_z::MatrixZ;
         use crate::traits::Pow;
 
         #[test]
-    #[should_panic]
-    fn matrix_new_invalid() {
-        let _matrix_a = Matrix::new(vec![5, 6, 7, 8, 9, 10], 3);
+        #[should_panic]
+        fn matrix_z_new_invalid() {
+            let _matrix_z_a = MatrixZ::new(vec![5, 6, 7, 8, 9, 10], 3);
+        }
+
+        #[test]
+        fn matrix_z_add_same_size() {
+            let matrix_z_a = MatrixZ::new(vec![1, 2, 3, 4], 2);
+            let matrix_z_b = MatrixZ::new(vec![5, 6, 7, 8], 2);
+            let expected_result = MatrixZ::new(vec![6, 8, 10, 12], 2);
+
+            assert_eq!(matrix_z_a + matrix_z_b, expected_result);
+
+            let matrix_z_a = MatrixZ::new(vec![1, 4, 3, 4, 5, 2, 9, 6, 3], 3);
+            let matrix_z_b = MatrixZ::new(vec![2, 6, 1, 8, 5, 8, 2, 1, 0], 3);
+            let expected_result = MatrixZ::new(vec![3, 10, 4, 12, 10, 10, 11, 7, 3], 3);
+
+            assert_eq!(matrix_z_a + matrix_z_b, expected_result);
+        }
+
+        #[test]
+        #[should_panic]
+        fn matrix_z_add_diff_size() {
+
+            let matrix_z_a = MatrixZ::new(vec![1, 2, 3, 4], 2);
+            let matrix_z_b = MatrixZ::new(vec![5, 6, 7, 8, 9, 10, 11, 12, 13], 3);
+            let _ = matrix_z_a + matrix_z_b;
+        }
+
+        #[test]
+        fn matrix_z_mul_same_size() {
+            let matrix_z_a = MatrixZ::new(vec![1, 2, 3, 4], 2);
+            let matrix_z_b = MatrixZ::new(vec![5, 6, 7, 8], 2);
+            let expected_result = MatrixZ::new(vec![19, 22, 43, 50], 2);
+
+            assert_eq!(matrix_z_a * matrix_z_b, expected_result);
+
+            let matrix_z_a = MatrixZ::new(vec![1, 4, 3, 4, 5, 2, 9, 6, 3], 3);
+            let matrix_z_b = MatrixZ::new(vec![2, 6, 1, 8, 5, 8, 2, 1, 0], 3);
+            let expected_result = MatrixZ::new(vec![40, 29, 33, 52, 51, 44, 72, 87, 57], 3);
+            
+
+            assert_eq!(matrix_z_a * matrix_z_b, expected_result);
+        }
+
+        #[test]
+        #[should_panic]
+        fn matrix_z_mul_diff_size() {
+
+            let matrix_z_a = MatrixZ::new(vec![1, 2, 3, 4], 2);
+            let matrix_z_b = MatrixZ::new(vec![5, 6, 7, 8, 9, 10, 11, 12, 13], 3);
+            let _ = matrix_z_a * matrix_z_b;
+        }
+
+        #[test]
+        fn matrix_z_pow() {
+            let matrix_z_a = MatrixZ::new(vec![1, 2, 3, 4], 2);
+            let matrix_z_a_pow_4 = MatrixZ::new(vec![199, 290, 435, 634], 2);
+            assert_eq!(matrix_z_a.pow(4), matrix_z_a_pow_4);
+
+            let matrix_z_b = MatrixZ::new(vec![2, 6, 1, 8, 5, 8, 2, 1, 0], 3);
+            let matrix_z_b_pow_3 = MatrixZ::new(vec![552, 589, 398, 888, 885, 720, 180, 167, 148], 3);
+            assert_eq!(matrix_z_b.pow(3), matrix_z_b_pow_3);
+        }
     }
 
-    #[test]
-    fn matrix_add_same_size() {
-        let matrix_a = Matrix::new(vec![1, 2, 3, 4], 2);
-        let matrix_b = Matrix::new(vec![5, 6, 7, 8], 2);
-        let expected_result = Matrix::new(vec![6, 8, 10, 12], 2);
+    mod matrix_ring_test{
+        use crate::{matrix_ring::MatrixRing, zn::Zn, traits::Pow};
 
-        assert_eq!(matrix_a + matrix_b, expected_result);
 
-        let matrix_a = Matrix::new(vec![1, 4, 3, 4, 5, 2, 9, 6, 3], 3);
-        let matrix_b = Matrix::new(vec![2, 6, 1, 8, 5, 8, 2, 1, 0], 3);
-        let expected_result = Matrix::new(vec![3, 10, 4, 12, 10, 10, 11, 7, 3], 3);
+        #[test]
+        fn matrix_z_add_same_size() {
+            let matrix_z_a = MatrixRing::new(Zn::from_vec(vec![1, 2, 3, 4], 13), 2);
+            let matrix_z_b = MatrixRing::new(Zn::from_vec(vec![5, 6, 7, 8], 13), 2);
+            let expected_result = MatrixRing::new(Zn::from_vec(vec![6, 8, 10, 12], 13), 2);
 
-        assert_eq!(matrix_a + matrix_b, expected_result);
-    }
+            assert_eq!(matrix_z_a + matrix_z_b, expected_result);
 
-    #[test]
-    #[should_panic]
-    fn matrix_add_diff_size() {
+            let matrix_z_a = MatrixRing::new(Zn::from_vec(vec![1, 4, 3, 4, 5, 2, 9, 6, 3], 13), 3);
+            let matrix_z_b = MatrixRing::new(Zn::from_vec(vec![2, 6, 1, 8, 5, 8, 2, 1, 0], 13), 3);
+            let expected_result = MatrixRing::new(Zn::from_vec(vec![3, 10, 4, 12, 10, 10, 11, 7, 3], 13), 3);
 
-        let matrix_a = Matrix::new(vec![1, 2, 3, 4], 2);
-        let matrix_b = Matrix::new(vec![5, 6, 7, 8, 9, 10, 11, 12, 13], 3);
-        let _ = matrix_a + matrix_b;
-    }
+            assert_eq!(matrix_z_a + matrix_z_b, expected_result);
+        }
 
-    #[test]
-    fn matrix_mul_same_size() {
-        let matrix_a = Matrix::new(vec![1, 2, 3, 4], 2);
-        let matrix_b = Matrix::new(vec![5, 6, 7, 8], 2);
-        let expected_result = Matrix::new(vec![19, 22, 43, 50], 2);
+        #[test]
+        #[should_panic]
+        fn matrix_z_add_diff_size() {
 
-        assert_eq!(matrix_a * matrix_b, expected_result);
+            let matrix_z_a = MatrixRing::new(Zn::from_vec(vec![1, 2, 3, 4], 13), 2);
+            let matrix_z_b = MatrixRing::new(Zn::from_vec(vec![5, 6, 7, 8, 9, 10, 11, 12, 7], 13), 3);
+            let _ = matrix_z_a + matrix_z_b;
+        }
 
-        let matrix_a = Matrix::new(vec![1, 4, 3, 4, 5, 2, 9, 6, 3], 3);
-        let matrix_b = Matrix::new(vec![2, 6, 1, 8, 5, 8, 2, 1, 0], 3);
-        let expected_result = Matrix::new(vec![40, 29, 33, 52, 51, 44, 72, 87, 57], 3);
+        #[test]
+        fn matrix_z_mul_same_size() {
+            let matrix_z_a = MatrixRing::new(Zn::from_vec(vec![1, 2, 3, 4], 13), 2);
+            let matrix_z_b = MatrixRing::new(Zn::from_vec(vec![5, 6, 7, 8], 13), 2);
+            let expected_result = MatrixRing::new(Zn::from_vec(vec![6, 9, 4, 11], 13), 2);
+
+            assert_eq!(matrix_z_a * matrix_z_b, expected_result);
+
+            let matrix_z_a = MatrixRing::new(Zn::from_vec(vec![1, 4, 3, 4, 5, 2, 9, 6, 3], 13), 3);
+            let matrix_z_b = MatrixRing::new(Zn::from_vec(vec![2, 6, 1, 8, 5, 8, 2, 1, 0], 13), 3);
+            let expected_result = MatrixRing::new(Zn::from_vec(vec![40, 29, 33, 52, 51, 44, 72, 87, 57], 13), 3);
+            
+
+            assert_eq!(matrix_z_a * matrix_z_b, expected_result);
+        }
+
+         
         
 
-        assert_eq!(matrix_a * matrix_b, expected_result);
-    }
+        #[test]
+        fn matrix_z_pow() {
+            let matrix_z_a = MatrixRing::new(Zn::from_vec(vec![1, 2, 3, 4], 13), 2);
+            let matrix_z_a_pow_4 = MatrixRing::new(Zn::from_vec(vec![199, 290, 435, 634], 13), 2);
+            assert_eq!(matrix_z_a.pow(4), matrix_z_a_pow_4);
 
-    #[test]
-    #[should_panic]
-    fn matrix_mul_diff_size() {
+            let matrix_z_b = MatrixRing::new(Zn::from_vec(vec![2, 6, 1, 8, 5, 8, 2, 1, 0], 13), 3);
+            let matrix_z_b_pow_3 = MatrixRing::new(Zn::from_vec(vec![552, 589, 398, 888, 885, 720, 180, 167, 148], 13), 3);
+            assert_eq!(matrix_z_b.pow(3), matrix_z_b_pow_3);
+        }
 
-        let matrix_a = Matrix::new(vec![1, 2, 3, 4], 2);
-        let matrix_b = Matrix::new(vec![5, 6, 7, 8, 9, 10, 11, 12, 13], 3);
-        let _ = matrix_a * matrix_b;
-    }
-
-    #[test]
-    fn matrix_pow() {
-        let matrix_a = Matrix::new(vec![1, 2, 3, 4], 2);
-        let matrix_a_pow_4 = Matrix::new(vec![199, 290, 435, 634], 2);
-        assert_eq!(matrix_a.pow(4), matrix_a_pow_4);
-
-        let matrix_b = Matrix::new(vec![2, 6, 1, 8, 5, 8, 2, 1, 0], 3);
-        let matrix_b_pow_3 = Matrix::new(vec![552, 589, 398, 888, 885, 720, 180, 167, 148], 3);
-        assert_eq!(matrix_b.pow(3), matrix_b_pow_3);
-    }
     }
     
     mod poly_zx_test{
 
 
-        use crate::{poly::poly_zx::PolyZx , matrix::Matrix, zn::Zn};
+        use crate::{poly::poly_zx::PolyZx , matrix_z::MatrixZ, zn::Zn};
 
 
         #[test]
@@ -216,9 +273,9 @@ mod tests {
 
         assert_eq!(poly.eval(a),Zn{nb: 5,n:13});
 
-        let matrix = Matrix::new(vec![1,0,2,3],2);
+        let MatrixZ = MatrixZ::new(vec![1,0,2,3],2);
 
-        assert_eq!(poly.eval(matrix), Matrix::new(vec![12,0,58,70],2));
+        assert_eq!(poly.eval(MatrixZ), MatrixZ::new(vec![12,0,58,70],2));
     }
     #[test]
     fn poly_of_poly(){
@@ -234,10 +291,11 @@ mod tests {
     }
 
     mod poly_ring_test{
+        use crate::poly::poly_zx::PolyZx;
         use crate::traits::{Zero, One};
         use crate::poly::poly_ring::Poly;
         use crate::zn::Zn;
-        use crate::matrix::Matrix;
+        use crate::matrix_z::MatrixZ;
 
         #[test]
         fn poly_ring_eval(){
@@ -248,14 +306,14 @@ mod tests {
     
             assert_eq!(poly.eval(a),Zn{nb: 5,n:13});
     
-            let matrix_a = Matrix::new(vec![3,0,1,1],2);
-            let matrix_b = Matrix::new(vec![2,4,0,1],2);
+            let MatrixZ_a = MatrixZ::new(vec![3,0,1,1],2);
+            let MatrixZ_b = MatrixZ::new(vec![2,4,0,1],2);
     
-            let poly: Poly<Matrix> = Poly { coeff: vec![matrix_a.clone(),matrix_b.clone()] };
+            let poly: Poly<MatrixZ> = Poly { coeff: vec![MatrixZ_a.clone(),MatrixZ_b.clone()] };
     
-            let matrix = Matrix::new(vec![1,0,2,3],2);
+            let MatrixZ = MatrixZ::new(vec![1,0,2,3],2);
     
-            assert_eq!(poly.eval(matrix.clone()), matrix_a + (matrix * matrix_b));
+            assert_eq!(poly.eval(MatrixZ.clone()), MatrixZ_a + (MatrixZ * MatrixZ_b));
         }
 
         #[test]
@@ -276,25 +334,20 @@ mod tests {
 
             assert_eq!(poly_a + poly_b, expected_result);
 
-            let poly_a: Poly<i32> = Poly{coeff: vec![5,1,7]};
-            let poly_b: Poly<i32> = Poly{coeff: vec![-5,-1,-7]};
-
-
-            assert!((poly_a + poly_b).is_zero());
-
         }
     
         #[test]
     fn poly_ring_mul() {
-        let poly_a:Poly<i32> = Poly{coeff:vec![1,0,1]};
-        let poly_b:Poly<i32> = Poly{coeff:vec![3,2]};
-        let expected_result:Poly<i32> = Poly{coeff:vec![3,2,3,2]};
+        let poly_a = Poly{coeff: Zn::from_vec(vec![1,0,1], 13)};
+        let poly_b = Poly{coeff: Zn::from_vec(vec![3,2], 13)};
+
+        let expected_result= Poly{coeff: Zn::from_vec(vec![3,2,3,2], 13)};
 
         assert_eq!(poly_a * poly_b , expected_result);
 
-        let poly_a:Poly<i32> = Poly{coeff:vec![0,0,3,2,5]};
-        let poly_b:Poly<i32> = Poly{coeff:vec![4,1,7]};
-        let expected_result:Poly<i32> = Poly{coeff:vec![0,0,12,11,43,19,35]};
+        let poly_a = Poly{coeff: Zn::from_vec(vec![0,0,3,2,5], 27)};
+        let poly_b = Poly{coeff: Zn::from_vec(vec![4,1,7], 27)};
+        let expected_result = Poly{coeff: Zn::from_vec(vec![0,0,12,11,16,19,8], 27)};
 
         assert_eq!(poly_a * poly_b , expected_result);
     }
@@ -304,9 +357,9 @@ mod tests {
         fn poly_ring_of_poly(){
 
     
-            let poly_a = Poly{coeff:vec![Poly{coeff:vec![1]},Poly{coeff:vec![2]},Poly{coeff:vec![1]}]};
-            let poly_b = Poly{coeff:vec![4,1,7]};
-            assert_eq!(poly_a.eval(poly_b), Poly{coeff:vec![25,10,71,14,49]});
+            let poly_a = Poly{coeff:vec![PolyZx{coeff:vec![1]},PolyZx{coeff:vec![2]},PolyZx{coeff:vec![1]}]};
+            let poly_b = PolyZx{coeff:vec![4,1,7]};
+            assert_eq!(poly_a.eval(poly_b), PolyZx{coeff:vec![25,10,71,14,49]});
     
         }
     }
@@ -544,7 +597,6 @@ mod tests {
         
     }
     
-    
     mod ec_test{
 
         use crate::elliptic_curve::{EllipticCurve,EllipticCurvePoint,ECPoint};
@@ -574,6 +626,29 @@ mod tests {
 
             assert_eq!(x + y, expected_result);
 
+            let x = ec.new_point(Zn::new(0, 5),Zn::new(1, 5));
+            let y = ec.new_point(Zn::new(0, 5),Zn::new(4, 5));
+
+            let expected_result = ec.infinity();
+
+            assert_eq!(x + y, expected_result);
+
+            let ec = EllipticCurve::new(Zn::new(8, 13),Zn::new(8, 13));
+
+            let x = ec.new_point(Zn::new(4, 13),Zn::new(0, 13));
+
+            let expected_result = ec.infinity();
+
+            assert_eq!(x.clone() + x, expected_result);
+
+
+            let x = ec.new_point(Zn::new(10, 13),Zn::new(3, 13));
+            let y = ec.new_point(Zn::new(10, 13),Zn::new(10, 13));
+
+            let expected_result = ec.infinity();
+
+            assert_eq!(x + y, expected_result);
+
         }
 
         #[test]
@@ -587,6 +662,19 @@ mod tests {
             let y = ec2.new_point(Zn::new(11, 13),Zn::new(7, 13));
 
             let _= x + y;
+        }
+
+        #[test]
+        fn ec_mul_scalar(){
+
+            let ec = EllipticCurve::new(Zn::new(8, 13),Zn::new(8, 13));
+
+            let pt = ec.new_point(Zn::new(11,13), Zn::new(7, 13));
+
+            assert_eq!(pt.clone() * -20, ec.infinity());
+
+            assert_eq!(pt.clone() * 0, ec.infinity());
+
         }
 
 

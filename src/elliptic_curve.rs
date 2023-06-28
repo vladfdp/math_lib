@@ -121,11 +121,16 @@ impl<T:Field> Sub for EllipticCurvePoint<T>{
     }
 }
 
-impl<T:Field> Mul<u32> for EllipticCurvePoint<T>{
+impl<T:Field> Mul<i32> for EllipticCurvePoint<T>{
     type Output = Self;
 
-    fn mul(self, rhs: u32) -> Self::Output {
-        let mut x = self.clone();
+    fn mul(self, rhs: i32) -> Self::Output {
+
+        let mut x = self;
+        if rhs < 0 {
+            x = -x;
+        }
+        
         let mut k = rhs;
         let mut ans = x.zero();
         while k > 0{

@@ -2,12 +2,12 @@ use std::ops::{Mul,Add, Sub, Neg};
 use crate::traits::{One,Zero};
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Matrix{ //would be nice to let coefficients be part of any ring
+pub struct MatrixZ{ //coeff should be of len n*n 
     coeff: Vec<i32>,
     n:usize
 }
 
-impl Matrix{                // get an element of the Matrix, a line or a column or create new Matrix
+impl MatrixZ{                // get an element of the Matrix, a line or a column or create new Matrix
     pub fn get(&self,i:usize,j:usize) -> i32{
         self.coeff[ i*self.n + j]
     }
@@ -34,11 +34,11 @@ impl Matrix{                // get an element of the Matrix, a line or a column 
         ans
     }
 
-    pub fn new(coeff:Vec<i32>, n:usize) -> Matrix{
+    pub fn new(coeff:Vec<i32>, n:usize) -> MatrixZ{
         if n*n !=coeff.len() {
             panic!("coeff is not the right length, is {} and should be {}",coeff.len(),n*n);
         }
-        Matrix{
+        MatrixZ{
             coeff,
             n
         }
@@ -46,14 +46,14 @@ impl Matrix{                // get an element of the Matrix, a line or a column 
 
 }
 
-impl Add for Matrix{
-    type Output = Matrix;
+impl Add for MatrixZ{
+    type Output = MatrixZ;
 
-    fn add(self, rhs: Matrix) -> Matrix{
+    fn add(self, rhs: MatrixZ) -> MatrixZ{
         if self.n != rhs.n {
             panic!("Matrices are not the same size {} and {}",self.n,rhs.n);
         }
-        Matrix::new(
+        MatrixZ::new(
         self.coeff.iter()
         .zip(rhs.coeff.iter())
         .map(|(x,y)|x+y).collect(),
@@ -61,7 +61,7 @@ impl Add for Matrix{
     }
 }
 
-impl Sub for Matrix{
+impl Sub for MatrixZ{
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -69,10 +69,10 @@ impl Sub for Matrix{
     }
 }
 
-impl Mul for Matrix{
-    type Output = Matrix;
+impl Mul for MatrixZ{
+    type Output = MatrixZ;
 
-    fn mul(self, rhs: Matrix) -> Matrix{
+    fn mul(self, rhs: MatrixZ) -> MatrixZ{
         if self.n != rhs.n {
             panic!("Matrices are not the same size {} and {}",self.n,rhs.n);
         }
@@ -86,17 +86,17 @@ impl Mul for Matrix{
             .sum());
            }
         }
-        Matrix::new(ans, self.n)
+        MatrixZ::new(ans, self.n)
     }
 
     
 }
 
-impl Mul<i32> for Matrix{
-    type Output = Matrix;
+impl Mul<i32> for MatrixZ{
+    type Output = MatrixZ;
 
-    fn mul(self,scalar:i32)-> Matrix{
-        Matrix::new(
+    fn mul(self,scalar:i32)-> MatrixZ{
+        MatrixZ::new(
             self.coeff.iter().map(|x| scalar * x).collect(),
             self.n
         )
@@ -105,9 +105,9 @@ impl Mul<i32> for Matrix{
 }
 
 
-impl One for Matrix{
-    fn one(&self)->Matrix{
-        let mut one:Matrix = Matrix::new( vec![0; self.n * self.n], self.n);
+impl One for MatrixZ{
+    fn one(&self)->MatrixZ{
+        let mut one:MatrixZ = MatrixZ::new( vec![0; self.n * self.n], self.n);
         for i in 0..self.n{
             one.coeff[ i + i* self.n] = 1;
         }
@@ -115,9 +115,9 @@ impl One for Matrix{
     }
 }
 
-impl Zero for Matrix{
-    fn zero(&self)-> Matrix{
-        Matrix::new( vec![0; self.n * self.n], self.n)
+impl Zero for MatrixZ{
+    fn zero(&self)-> MatrixZ{
+        MatrixZ::new( vec![0; self.n * self.n], self.n)
     }
     fn is_zero(&self)-> bool {
         for x in &self.coeff{
@@ -129,7 +129,7 @@ impl Zero for Matrix{
     }
 }
 
-impl Neg for Matrix{
+impl Neg for MatrixZ{
     type Output = Self;
 
     fn neg(self) -> Self::Output {
