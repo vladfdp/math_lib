@@ -129,5 +129,17 @@ impl Zn {
         }
     }
 
+    pub fn legendre_symbol(&self)->i32{
+        let ls = self.pow( ((self.n - 1)/ 2).try_into().unwrap() ).nb;
+        if ls > 1 {
+            return ls - self.n;
+        }
+        ls
+    }
+
+    pub fn is_square(&self) -> bool{
+        self.legendre_symbol() >= 0
+    }
+
 
 }

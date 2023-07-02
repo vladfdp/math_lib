@@ -23,71 +23,83 @@ mod tests {
         use crate::traits::Inv;
 
         #[test]
-    fn zn_add_same_ring() {
+        fn zn_add_same_ring() {
+            let a = Zn { nb: 5, n: 7 };
+            let b = Zn { nb: 4, n: 7 };
+            assert_eq!(a + b, Zn { nb: 2, n: 7 });
+
+            let a = Zn { nb: 5, n: 7 };
+            let b = Zn { nb: 0, n: 7 };
+            assert_eq!(a + b, Zn { nb: 5, n: 7 });
+
+            let a = Zn { nb: 10_000, n: 15_000 };
+            let b = Zn { nb: 7_000, n: 15_000 };
+            assert_eq!(a + b, Zn { nb: 2_000, n: 15_000 });
+        }
+
+        #[test]
+        #[should_panic]
+        fn zn_add_different_ring() {
+            let a = Zn { nb: 3, n: 5 };
+            let b = Zn { nb: 2, n: 7 };
+            let _result = a + b;
+        }
+
+        #[test]
+        fn zn_mul_same_ring() {
+            let a = Zn { nb: 5, n: 7 };
+            let b = Zn { nb: 4, n: 7 };
+            assert_eq!(a * b, Zn { nb: 6, n: 7 });
+
+            let a = Zn { nb: 5, n: 7 };
+            let b = Zn { nb: 0, n: 7 };
+            assert_eq!(a * b, Zn { nb: 0, n: 7 });
+
+            let a = Zn { nb: 10_000, n: 15_000 };
+            let b = Zn { nb: 7_000, n: 15_000 };
+            assert_eq!(a * b, Zn { nb: 10_000, n: 15_000 });
+        }
+
+        #[test]
+        fn zn_inv() {
+            let a = Zn { nb: 5, n: 7 };
+            assert_eq!(a.inv(), Zn { nb: 3, n: 7 });
+
+            let a = Zn { nb: 6, n: 13 };
+            assert_eq!(a.inv(), Zn { nb: 11, n: 13 });
+        }
+
+        #[test]
+        #[should_panic]
+        fn zn_mul_different_ring() {
+            let a = Zn { nb: 3, n: 5 };
+            let b = Zn { nb: 2, n: 7 };
+            let _result = a * b;
+        }
+
+        #[test]
+        fn zn_pow() {
         let a = Zn { nb: 5, n: 7 };
-        let b = Zn { nb: 4, n: 7 };
-        assert_eq!(a + b, Zn { nb: 2, n: 7 });
+        assert_eq!(a.pow(3), Zn { nb: 6, n: 7 });
 
-        let a = Zn { nb: 5, n: 7 };
-        let b = Zn { nb: 0, n: 7 };
-        assert_eq!(a + b, Zn { nb: 5, n: 7 });
+        let b = Zn { nb: 7, n: 11 };
+        assert_eq!(b.pow(2), Zn { nb: 5, n: 11 });
 
-        let a = Zn { nb: 10_000, n: 15_000 };
-        let b = Zn { nb: 7_000, n: 15_000 };
-        assert_eq!(a + b, Zn { nb: 2_000, n: 15_000 });
-    }
+        let c = Zn { nb: 3, n: 21 };
+        assert_eq!(c.pow(3), Zn { nb: 6, n: 21 });
+        }
 
-    #[test]
-    #[should_panic]
-    fn zn_add_different_ring() {
-        let a = Zn { nb: 3, n: 5 };
-        let b = Zn { nb: 2, n: 7 };
-        let _result = a + b;
-    }
+        #[test]
+        fn legendre_symbol_test(){
+            let a = Zn { nb: 5, n: 7 };
+            assert_eq!(a.legendre_symbol(), -1);
 
-    #[test]
-    fn zn_mul_same_ring() {
-        let a = Zn { nb: 5, n: 7 };
-        let b = Zn { nb: 4, n: 7 };
-        assert_eq!(a * b, Zn { nb: 6, n: 7 });
+            let b = Zn { nb: 7, n: 11 };
+            assert_eq!(b.legendre_symbol(),-1);
 
-        let a = Zn { nb: 5, n: 7 };
-        let b = Zn { nb: 0, n: 7 };
-        assert_eq!(a * b, Zn { nb: 0, n: 7 });
-
-        let a = Zn { nb: 10_000, n: 15_000 };
-        let b = Zn { nb: 7_000, n: 15_000 };
-        assert_eq!(a * b, Zn { nb: 10_000, n: 15_000 });
-    }
-
-    #[test]
-    fn zn_inv() {
-        let a = Zn { nb: 5, n: 7 };
-        assert_eq!(a.inv(), Zn { nb: 3, n: 7 });
-
-        let a = Zn { nb: 6, n: 13 };
-        assert_eq!(a.inv(), Zn { nb: 11, n: 13 });
-    }
-
-    #[test]
-    #[should_panic]
-    fn zn_mul_different_ring() {
-        let a = Zn { nb: 3, n: 5 };
-        let b = Zn { nb: 2, n: 7 };
-        let _result = a * b;
-    }
-
-    #[test]
-    fn zn_pow() {
-       let a = Zn { nb: 5, n: 7 };
-       assert_eq!(a.pow(3), Zn { nb: 6, n: 7 });
-
-       let b = Zn { nb: 7, n: 11 };
-       assert_eq!(b.pow(2), Zn { nb: 5, n: 11 });
-
-       let c = Zn { nb: 3, n: 21 };
-       assert_eq!(c.pow(3), Zn { nb: 6, n: 21 });
-    }
+            let c = Zn { nb: 3, n: 11 };
+            assert_eq!(c.legendre_symbol(), 1);
+        }
     }
 
     mod matrix_z_test{
@@ -669,11 +681,22 @@ mod tests {
 
             let ec = EllipticCurve::new(Zn::new(8, 13),Zn::new(8, 13));
 
-            let pt = ec.new_point(Zn::new(11,13), Zn::new(7, 13));
+            let g = ec.new_point(Zn::new(7,13), Zn::new(11, 13));
 
-            assert_eq!(pt.clone() * -20, ec.infinity());
+            let two_g = ec.new_point(Zn::new(8,13), Zn::new(5, 13));
 
-            assert_eq!(pt.clone() * 0, ec.infinity());
+            let three_g = ec.new_point(Zn::new(8,13), Zn::new(8, 13));
+
+            let four_g = ec.new_point(Zn::new(7,13), Zn::new(2, 13));
+            
+
+            assert_eq!(g.clone() * 2, two_g);
+
+            assert_eq!(g.clone() * 3, three_g);
+
+            assert_eq!(g * 4, four_g);
+
+
 
         }
 
