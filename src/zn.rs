@@ -1,5 +1,5 @@
 use std::ops::{Mul,Add, Sub, Neg, Div};
-use crate::traits::{One, Zero, Pow, Inv, Card};
+use crate::{traits::{One, Zero, Pow, Inv, Card}, field_extension::FieldExtension};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Zn{ //ring Z/nZ, if n prime we get a field
@@ -139,6 +139,27 @@ impl Zn {
 
     pub fn is_square(&self) -> bool{
         self.legendre_symbol() >= 0
+    }
+
+    pub fn sqrt(a:Zn)->Zn{
+        if !a.is_square(){
+            panic!("{} is not a square mod {}",a.nb,a.n);
+        }
+
+        let mut t = Zn::new(2, a.n);
+
+        while (t.pow(2) - a.clone()).is_square() {
+            t.nb += 1;
+        }
+
+
+        let x: FieldExtension<Zn> = FieldExtension::new_from_vec(vec![t.clone() ,t.one()], vec![a.clone() - t.pow(2), t.zero(), t.one()]);
+
+        let ans: FieldExtension<Zn> = x.pow(((a.n + 1)/ 2).try_into().unwrap());
+
+        ans.nb.coeff[0].clone()
+
+
     }
 
 

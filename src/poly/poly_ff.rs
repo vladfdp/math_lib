@@ -8,10 +8,7 @@ pub struct Polyff<T:Field>{ //Polynomial over a field
     pub coeff: Vec<T>
 }
 
-impl<T> Polyff<T>
-where
-    T:Field
-{
+impl<T:Field> Polyff<T>{
     pub fn get_deg(&self)->usize{self.coeff.len()-1}
 
     pub fn eval(&self,x:T)-> T {
@@ -184,6 +181,7 @@ impl<T:Field> Rem for Polyff<T>{
     }
     
 }
+
 impl<T:Field> Neg for Polyff<T>{
     type Output = Self;
 

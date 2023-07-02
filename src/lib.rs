@@ -100,6 +100,30 @@ mod tests {
             let c = Zn { nb: 3, n: 11 };
             assert_eq!(c.legendre_symbol(), 1);
         }
+
+        #[test]
+        fn zn_sqrt(){
+            let a = Zn::new(10, 13);
+
+            let expected_result = Zn::new(6, 13);
+
+            assert_eq!(Zn::sqrt(a), expected_result);
+
+            let a = Zn { nb: 3, n: 11 };
+
+            let expected_result = Zn::new(5, 11);
+
+            assert_eq!(Zn::sqrt(a), expected_result);
+        }
+
+        #[test]
+        #[should_panic]
+        fn zn_invalid_sqrt(){
+            let a = Zn { nb: 5, n: 7 };
+            
+            let _= Zn::sqrt(a);
+        }
+
     }
 
     mod matrix_z_test{
@@ -713,6 +737,11 @@ mod tests {
     #[test]
     fn test(){
 
+        let x = Zn::new(10, 13);
+
+        let y = Zn::sqrt(x);
+
+        println!("{:?}",y)
        
     }
 
