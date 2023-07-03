@@ -80,7 +80,35 @@ impl Sub for Zn{
 }
 
 impl Inv for Zn{ //works only if self.n is prime
-    fn inv(&self)->Zn{self.pow((self.n-2).try_into().unwrap())}
+    fn inv(&self)->Zn{
+        
+        let mut t = 0;
+        let mut newt = 1;
+        let mut r = self.n;    
+        let mut newr = self.nb;
+    
+        while newr != 0 {
+            let quotient = r / newr;
+
+            let tmp = t;
+            t = newt;
+            newt = tmp - (quotient * newt);
+
+            let tmp = r;
+            r = newr;
+            newr = tmp - (quotient * newr);
+        }
+    
+        if t < 0 {
+            t += self.n;
+        }
+        
+        Zn::new(t, self.n)
+        
+        
+        
+        //self.pow((self.n-2).try_into().unwrap())
+    }
 }
 
 impl Div for Zn{
@@ -141,7 +169,7 @@ impl Zn {
         self.legendre_symbol() >= 0
     }
 
-    pub fn sqrt(a:Zn)->Zn{
+    pub fn sqrt(a:Zn)->Zn{  //using cipolla's algorithm
         if !a.is_square(){
             panic!("{} is not a square mod {}",a.nb,a.n);
         }
