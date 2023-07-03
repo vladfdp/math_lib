@@ -82,9 +82,32 @@ impl<T:Field> Zero for FieldExtension<T>{
     }
 }
 
-impl<T:Field> Inv for FieldExtension<T>{ //TODO! : make this better
+impl<T:Field> Inv for FieldExtension<T>{ //Extended euclidean algorithm from wikipedia.org/wiki/Extended_Euclidean_algorithm
     fn inv(&self)->FieldExtension<T>{
-        self.pow((self.get_card()-2).try_into().unwrap())
+
+        let mut t = self.nb.zero();
+        let mut newt = self.nb.one();
+        let mut r = self.poly.clone();    
+        let mut newr = self.nb.clone();
+    
+        while !newr.is_zero() {
+
+
+            let quotient = r.clone() / newr.clone();
+
+            let tmp = t;
+            t = newt.clone();
+            newt = tmp - (quotient.clone() * newt);
+
+            let tmp = r;
+            r = newr.clone();
+            newr = tmp - (quotient * newr);
+        }
+
+        FieldExtension{
+            nb:t * r.coeff[0].inv(),
+            poly:self.poly.clone()
+        }
     }
 }
 

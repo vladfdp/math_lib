@@ -141,14 +141,15 @@ impl<T:Field> Div for Polyff<T>{
         let mut a = self;
         let b = rhs;
         let pivot = b.coeff.last().unwrap().inv();
+
         
-        
-        while a.get_deg() >= b.get_deg() {
+        while a.get_deg() >= b.get_deg() && !a.is_zero(){
 
             let x = pivot.clone() * a.coeff.last().unwrap().clone();
             ans[a.get_deg() - b.get_deg()] = x.clone();
             a = a.clone() - (b.times_x_to_the(a.get_deg() - b.get_deg()) * x );
             a = a.rm_trailing_zeros();
+
         }
         Polyff{
             coeff:ans
@@ -173,7 +174,7 @@ impl<T:Field> Rem for Polyff<T>{
         let b = rhs;
         let pivot = b.coeff.last().unwrap().inv();
         
-        while a.get_deg() >= b.get_deg() {
+        while a.get_deg() >= b.get_deg() && !a.is_zero(){
             a = a.clone() - (b.times_x_to_the(a.get_deg() - b.get_deg()) * (pivot.clone() * a.coeff.last().unwrap().clone()) );
             a = a.rm_trailing_zeros();
         }
