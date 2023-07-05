@@ -12,7 +12,7 @@ mod elliptic_curve;
 #[cfg(test)]
 mod tests {
 
-
+ 
     //use std::convert::TryInto;
     //use std::ops::{Add,Mul};
 
@@ -543,7 +543,10 @@ mod tests {
     }
  
     mod fe_test{
-        use crate::{field_extension::FieldExtension, zn::Zn, traits::{Inv, Card, One, Zero, Pow}, poly::poly_ff::Polyff};
+        use crate::{field_extension::FieldExtension,
+            zn::Zn, 
+            traits::{Inv, Card, One, Zero, Pow},
+            poly::poly_ff::Polyff};
 
 
         #[test]

@@ -79,7 +79,7 @@ impl Sub for Zn{
     }
 }
 
-impl Inv for Zn{ //works only if self.n is prime
+impl Inv for Zn{ //Extended euclidean algorithm from wikipedia.org/wiki/Extended_Euclidean_algorithm
     fn inv(&self)->Zn{
         
         let mut t = 0;
@@ -105,9 +105,6 @@ impl Inv for Zn{ //works only if self.n is prime
         
         Zn::new(t, self.n)
         
-        
-        
-        //self.pow((self.n-2).try_into().unwrap())
     }
 }
 
