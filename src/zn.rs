@@ -167,7 +167,7 @@ impl Zn {
         self.legendre_symbol() >= 0
     }
 
-    pub fn sqrt(a:Zn)->Zn{  //using cipolla's algorithm
+    pub fn sqrt(a:Zn)->(Zn,Zn){  //using cipolla's algorithm
         if !a.is_square(){
             panic!("{} is not a square mod {}",a.nb,a.n);
         }
@@ -183,7 +183,9 @@ impl Zn {
 
         let ans: FieldExtension<Zn> = x.pow(((a.n + 1)/ 2).try_into().unwrap());
 
-        ans.nb.coeff[0].clone()
+        let y = ans.nb.coeff[0].clone();
+
+        (y.clone(),-y)
 
 
     }

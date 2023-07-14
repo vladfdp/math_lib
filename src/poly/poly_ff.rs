@@ -40,6 +40,31 @@ impl<T:Field> Polyff<T>{
             coeff
         }.rm_trailing_zeros()
     }
+
+    pub fn GCD(f:Polyff<T>, g: Polyff<T>)->Polyff<T>{
+
+        let fdeg = f.get_deg();
+        let gdeg = g.get_deg();
+
+        let mut a = f;
+        let mut b = g;
+
+        if fdeg < gdeg{
+            std::mem::swap(&mut a, &mut b);
+        }
+            
+            
+
+        let mut c = a.clone() % b.clone();
+
+        while !c.is_zero(){
+            a = b;
+            b = c;
+            c = a.clone() % b.clone();
+        }
+
+        b
+    }
 }
 
 impl<T:Field> Add for Polyff<T>{

@@ -107,13 +107,13 @@ mod tests {
 
             let expected_result = Zn::new(6, 13);
 
-            assert_eq!(Zn::sqrt(a), expected_result);
+            assert_eq!(Zn::sqrt(a).0, expected_result);
 
             let a = Zn { nb: 3, n: 11 };
 
             let expected_result = Zn::new(5, 11);
 
-            assert_eq!(Zn::sqrt(a), expected_result);
+            assert_eq!(Zn::sqrt(a).0, expected_result);
         }
 
         #[test]
