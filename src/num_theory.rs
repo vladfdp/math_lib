@@ -2,7 +2,7 @@ use crate::zn::Zn;
 use crate::poly::poly_ff::Polyff;
 use crate::traits::Pow;
 
-pub fn is_prime(n:i32)->bool{
+pub fn is_prime(n:i32)->bool{ //this is slow, will implement miller-rabin or something
 
 
     if n < 2 { return false}

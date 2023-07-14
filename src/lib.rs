@@ -5,7 +5,7 @@ mod traits;
 mod poly;
 mod field_extension;
 mod elliptic_curve;
-mod prime;
+mod num_theory;
 
 
 
@@ -540,6 +540,31 @@ mod tests {
 
         }
 
+        #[test]
+        fn poly_ff_gcd(){
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![2,10,1], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![1,12,12,1], 13)};
+
+            let expected_result = Polyff{coeff: Zn::from_vec(vec![12,1], 13)};
+
+            assert_eq!(Polyff::GCD(poly_a, poly_b), expected_result);
+
+
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![2,10,1], 13)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![0], 13)};
+
+            let expected_result = Polyff{coeff: Zn::from_vec(vec![2,10,1], 13)};
+
+            assert_eq!(Polyff::GCD(poly_a, poly_b), expected_result);
+
+            let poly_a = Polyff{coeff: Zn::from_vec(vec![3,6,7,1,1,21], 23)};
+            let poly_b = Polyff{coeff: Zn::from_vec(vec![1,4,11], 23)};
+
+            let expected_result = Polyff{coeff: Zn::from_vec(vec![1], 23)};
+
+            assert_eq!(Polyff::GCD(poly_a, poly_b), expected_result);
+        }
+
     }
  
     mod fe_test{
@@ -730,9 +755,9 @@ mod tests {
 
     }
     
-    mod prime_irr_test{
+    mod num_theory_test{
 
-        use crate::prime::is_prime;
+        use crate::num_theory::is_prime;
 
         #[test]
         fn prime_check(){

@@ -52,7 +52,9 @@ impl<T:Field> Polyff<T>{
         if fdeg < gdeg{
             std::mem::swap(&mut a, &mut b);
         }
-            
+        if b.is_zero(){
+            return a;
+        }
             
 
         let mut c = a.clone() % b.clone();
@@ -63,7 +65,9 @@ impl<T:Field> Polyff<T>{
             c = a.clone() % b.clone();
         }
 
-        b
+        let pivot = b.coeff.last().unwrap().inv();
+
+        b * pivot
     }
 }
 
