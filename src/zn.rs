@@ -125,6 +125,7 @@ impl Card for Zn {
 }
 
 impl Zn {
+
     pub fn from_vec(vec: Vec<i32>,n:i32)-> Vec<Zn>{ // get a vec of Zn from a vec<i32> and n
         let mut ans:Vec<Zn> = Vec::new();
         for i in  vec{
@@ -189,3 +190,5 @@ impl Zn {
 
 
 }
+
+

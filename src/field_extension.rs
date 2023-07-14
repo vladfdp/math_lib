@@ -133,5 +133,7 @@ impl<T:Field> FieldExtension<T>  {
         poly: Polyff { coeff: poly } }
     }
 
-
+    pub fn frobenius_map(x:FieldExtension<T>)->FieldExtension<T>{
+        x.pow(x.get_char().try_into().unwrap())
+    }
 }

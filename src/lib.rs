@@ -5,7 +5,7 @@ mod traits;
 mod poly;
 mod field_extension;
 mod elliptic_curve;
-
+mod prime;
 
 
 
@@ -730,6 +730,19 @@ mod tests {
 
     }
     
+    mod prime_irr_test{
+
+        use crate::prime::is_prime;
+
+        #[test]
+        fn prime_check(){
+            assert!(is_prime(3));
+            assert!(is_prime(13));
+            assert!(is_prime(17));
+            assert!(is_prime(31));
+            assert!(!is_prime(16));
+        }
+    }
     
     use crate::poly::poly_ff::Polyff;
     use crate::zn::Zn;
