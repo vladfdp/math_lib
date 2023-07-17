@@ -9,6 +9,9 @@ pub struct MatrixZ{ //coeff should be of len n*n
 
 impl MatrixZ{                // get an element of the Matrix, a line or a column or create new Matrix
     pub fn get(&self,i:usize,j:usize) -> i32{
+        if self.n < i || self.n < j{
+            panic!("cannot get element at ({},{}) as matrix is size {}",i ,j ,self.n);
+        }
         self.coeff[ i*self.n + j]
     }
 
