@@ -1,9 +1,10 @@
 use std::ops::{Mul,Add, Sub, Neg};
-use crate::traits::{One,Zero};
+use crate::traits::Zero;
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct VectorZ{ 
-    coeff: Vec<i32>,
-    n:usize
+    pub coeff: Vec<i32>,
+    pub n:usize
 }
 
 
@@ -11,7 +12,7 @@ impl VectorZ{
     
     pub fn new(coeff:Vec<i32>)->VectorZ{
         VectorZ{
-            coeff,
+            coeff: coeff.clone(),
             n:coeff.len()
         }
     }
@@ -51,15 +52,15 @@ impl Sub for VectorZ{
 impl Mul for VectorZ{
     type Output = i32;
 
-    fn mul(self, rhs: VectorZ) -> VectorZ{
+    fn mul(self, rhs: VectorZ) -> i32{
         if self.n != rhs.n {
-            panic!("Matrices are not the same size {} and {}",self.n,rhs.n);
+            panic!("Vectors are not the same size {} and {}",self.n,rhs.n);
         }
-        let mut ans = self.iter()
-            .zip(rhs.iter())
-            .map(|(x, y)| x*y)
-            .sum();
-        VectorZ::new(ans)
+        self.coeff.iter()
+        .zip(rhs.coeff.iter())
+        .map(|(x,y)|x*y)
+        .sum()
+        
     }
 
     

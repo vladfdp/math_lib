@@ -1,10 +1,10 @@
 use std::ops::{Mul,Add, Sub, Neg};
-use crate::traits::{One,Zero};
+use crate::{traits::{One,Zero}, vector_z::VectorZ};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct MatrixZ{ //coeff should be of len n*n 
-    coeff: Vec<i32>,
-    n:usize
+    pub coeff: Vec<i32>,
+    pub n:usize
 }
 
 impl MatrixZ{                // get an element of the Matrix, a line or a column or create new Matrix
@@ -105,6 +105,21 @@ impl Mul<i32> for MatrixZ{
         )
     }
 
+}
+
+impl Mul<VectorZ> for MatrixZ{
+    type Output = VectorZ;
+
+    fn mul(self, rhs: VectorZ) -> Self::Output {
+        if self.n != rhs.n {
+            panic!("Matrix is not the same size as Vector, {} and {}",self.n,rhs.n);
+        }
+        let mut ans = Vec::new();
+        for i in 0..self.n{
+            ans.push(VectorZ::new(self.get_lin(i)) * rhs.clone()) //pushes the dot product of the i-th line and the vector
+        }
+        VectorZ::new(ans)
+    }
 }
 
 

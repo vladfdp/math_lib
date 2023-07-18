@@ -6,6 +6,7 @@ mod poly;
 mod field_extension;
 mod elliptic_curve;
 mod num_theory;
+mod vector_z;
 
 
 
@@ -257,7 +258,87 @@ mod tests {
         }
 
     }
-    
+
+    mod vector_z_test{
+
+
+        use crate::vector_z::VectorZ;
+
+        #[test]
+        fn vector_z_add_same_size() {
+            let vector_a = VectorZ::new(vec![1, 2, 3, 4]);
+            let vector_b = VectorZ::new(vec![5, 6, 7, 8]);
+            let expected_result = VectorZ::new(vec![6, 8, 10, 12]);
+
+            assert_eq!(vector_a + vector_b, expected_result);
+
+            let vector_a = VectorZ::new(vec![1, 4, 3, 4, 5, 2, 9, 6, 3]);
+            let vector_b = VectorZ::new(vec![2, 6, 1, 8, 5, 8, 2, 1, 0]);
+            let expected_result = VectorZ::new(vec![3, 10, 4, 12, 10, 10, 11, 7, 3]);
+
+            assert_eq!(vector_a + vector_b, expected_result);
+        }
+
+        #[test]
+        #[should_panic]
+        fn vector_z_add_diff_size() {
+
+            let vector_a = VectorZ::new(vec![1, 2, 3, 4]);
+            let vector_b = VectorZ::new(vec![5, 6, 7, 8, 9]);
+            let _ = vector_a + vector_b;
+        }
+
+        #[test]
+        fn vector_dot_product() {
+            let vector_a = VectorZ::new(vec![1, 2, 3, 4]);
+            let vector_b = VectorZ::new(vec![5, 6, 7, 8]);
+            let expected_result = 70;
+
+            assert_eq!(vector_a * vector_b, expected_result);
+
+            let vector_a = VectorZ::new(vec![1, 4, 3]);
+            let vector_b = VectorZ::new(vec![2, 6, 1]);
+            let expected_result = 29;
+            
+
+            assert_eq!(vector_a * vector_b, expected_result);
+        }
+
+        #[test]
+        #[should_panic]
+        fn vector_dot_prod_diff_size() {
+
+            let vector_a = VectorZ::new(vec![1, 2, 3, 4]);
+            let vector_b = VectorZ::new(vec![5, 6, 7, 8, 9, 10]);
+            let _ = vector_a * vector_b;
+        }
+    }
+
+
+    mod matrix_vector_mul{
+
+        use crate::matrix_z::MatrixZ;
+        use crate::vector_z::VectorZ;
+
+        #[test]
+        fn mat_vec_mul_over_z(){
+
+            let matrix = MatrixZ::new(vec![1, 2, 3, 4], 2);
+            let vector = VectorZ::new(vec![5, 6]);
+
+            let expected_result = VectorZ::new(vec![17, 39]);
+
+            assert_eq!(matrix * vector, expected_result);
+
+            let matrix = MatrixZ::new(vec![5, 6, 9, 1, 0, 0, 3, 2, 2], 3);
+            let vector = VectorZ::new(vec![1, 2, 4]);
+
+            let expected_result = VectorZ::new(vec![53, 1, 15]);
+
+            assert_eq!(matrix * vector, expected_result);
+        }
+    }
+
     mod poly_zx_test{
 
 
