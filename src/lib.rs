@@ -355,6 +355,10 @@ mod tests {
         use crate::matrix_z::MatrixZ;
         use crate::vector_z::VectorZ;
 
+        use crate::matrix_ring::MatrixRing;
+        use crate::vector_ring::Vector;
+        use crate::zn::Zn;
+
         #[test]
         fn mat_vec_mul_over_z(){
 
@@ -369,6 +373,24 @@ mod tests {
             let vector = VectorZ::new(vec![1, 2, 4]);
 
             let expected_result = VectorZ::new(vec![53, 1, 15]);
+
+            assert_eq!(matrix * vector, expected_result);
+        }
+
+        #[test]
+        fn mat_vec_mul_over_ring(){
+
+            let matrix = MatrixRing::new(Zn::from_vec(vec![1, 2, 3, 4],17), 2);
+            let vector = Vector::new(Zn::from_vec(vec![5, 6],17));
+
+            let expected_result = Vector::new(Zn::from_vec(vec![17, 39],17));
+
+            assert_eq!(matrix * vector, expected_result);
+
+            let matrix = MatrixRing::new(Zn::from_vec(vec![5, 6, 9, 1, 0, 0, 3, 2, 2],7), 3);
+            let vector = Vector::new(Zn::from_vec(vec![1, 2, 4],7));
+
+            let expected_result = Vector::new(Zn::from_vec(vec![53, 1, 15],7));
 
             assert_eq!(matrix * vector, expected_result);
         }

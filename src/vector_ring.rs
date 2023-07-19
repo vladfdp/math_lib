@@ -80,6 +80,16 @@ impl<T:Ring> Mul<i32> for Vector<T>{
 
 }
 
+impl<T:Ring> Mul<T> for Vector<T>{
+    type Output = Vector<T>;
+
+    fn mul(self,scalar:T)-> Vector<T>{
+        Vector::new(
+            self.coeff.iter().map(|x| x.clone() * scalar.clone() ).collect()
+        )
+    }
+
+}
 
 
 impl<T:Ring> Zero for Vector<T>{

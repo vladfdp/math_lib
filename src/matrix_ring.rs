@@ -1,6 +1,7 @@
 use std::ops::{Mul,Add, Sub, Neg};
 use crate::traits::{One,Zero};
 use crate::traits::Ring;
+use crate::vector_ring::Vector;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct MatrixRing<T:Ring>{ //coefficients are part of any ring
@@ -93,6 +94,21 @@ impl<T:Ring> Mul for MatrixRing<T>{
     }
 
     
+}
+
+impl<T:Ring> Mul<Vector<T>> for MatrixRing<T>{
+    type Output = Vector<T>;
+
+    fn mul(self, rhs: Vector<T>) -> Self::Output {
+        if self.n != rhs.n {
+            panic!("Matrix is not the same size as Vector, {} and {}",self.n,rhs.n);
+        }
+        let mut ans = Vec::new();
+        for i in 0..self.n{
+            ans.push(Vector::new(self.get_lin(i)) * rhs.clone()) //pushes the dot product of the i-th line and the vector
+        }
+        Vector::new(ans)
+    }
 }
 
 impl<T:Ring> Mul<i32> for MatrixRing<T>{
