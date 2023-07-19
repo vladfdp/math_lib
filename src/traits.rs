@@ -1,7 +1,8 @@
 
-use std::ops::{Add, Sub,Mul, Neg, Div};
+use std::ops::{Add, Sub, Mul, Neg, Div};
 use std::fmt::Debug;
 use std::cmp::PartialEq;
+use std::iter::Sum;
 
 pub trait One{ //Trait to get the multiplicative identity of the ring
     fn one(&self)-> Self;
@@ -65,4 +66,3 @@ pub trait Card {
 
 pub trait Field: Ring + Inv + Div<Output = Self> + Card{}
 impl<T: Ring + Inv + Div<Output = Self> + Card > Field for T {}
-

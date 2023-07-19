@@ -7,6 +7,7 @@ mod field_extension;
 mod elliptic_curve;
 mod num_theory;
 mod vector_z;
+mod vector_ring;
 
 
 
@@ -314,6 +315,40 @@ mod tests {
         }
     }
 
+    mod vector_ring_test{
+        use crate::{vector_ring::Vector, zn::Zn};
+
+        #[test]
+        fn vector_ring_add_same_size() {
+            let vector_a = Vector::new(Zn::from_vec(vec![1, 2, 3, 4],11));
+            let vector_b = Vector::new(Zn::from_vec(vec![5, 6, 7, 8],11));
+            let expected_result = Vector::new(Zn::from_vec(vec![6, 8, 10, 12], 11));
+
+            assert_eq!(vector_a + vector_b, expected_result);
+
+            let vector_a = Vector::new(Zn::from_vec(vec![1, 4, 3, 4, 5, 2, 9, 6, 3],5));
+            let vector_b = Vector::new(Zn::from_vec(vec![2, 6, 1, 8, 5, 8, 2, 1, 0],5));
+            let expected_result = Vector::new(Zn::from_vec(vec![3, 10, 4, 12, 10, 10, 11, 7, 3],5));
+
+            assert_eq!(vector_a + vector_b, expected_result);
+        }
+
+        #[test]
+        fn vector_ring_dot_product() {
+            let vector_a = Vector::new(Zn::from_vec(vec![1, 2, 3, 4],13));
+            let vector_b = Vector::new(Zn::from_vec(vec![5, 6, 7, 8],13));
+            let expected_result = Zn::new(70, 13);
+
+            assert_eq!(vector_a * vector_b, expected_result);
+
+            let vector_a = Vector::new(Zn::from_vec(vec![1, 4, 3],13));
+            let vector_b = Vector::new(Zn::from_vec(vec![2, 6, 1],13));
+            let expected_result = Zn::new(29, 13) ;
+            
+
+            assert_eq!(vector_a * vector_b, expected_result);
+        }
+    }
 
     mod matrix_vector_mul{
 
@@ -390,9 +425,18 @@ mod tests {
 
         assert_eq!(poly.eval(a),Zn{nb: 5,n:13});
 
-        let MatrixZ = MatrixZ::new(vec![1,0,2,3],2);
+        let matrix_z = MatrixZ::new(vec![1,0,2,3],2);
 
-        assert_eq!(poly.eval(MatrixZ), MatrixZ::new(vec![12,0,58,70],2));
+        assert_eq!(poly.eval(matrix_z), MatrixZ::new(vec![12,0,58,70],2));
+        
+
+        let matrix = MatrixZ::new(vec![1,3,2,0], 2);
+
+        let poly = PolyZx{coeff: vec![-6,-1,1]};
+
+        let expected_result = MatrixZ::new(vec![0,0,0,0], 2);
+
+        assert_eq!(poly.eval(matrix),expected_result)
     }
     #[test]
     fn poly_of_poly(){
@@ -851,19 +895,21 @@ mod tests {
     }
     
     use crate::poly::poly_ff::Polyff;
+    use crate::poly::poly_zx::PolyZx;
     use crate::zn::Zn;
     use crate::traits::{Pow,Inv};
 
 
 
+    use crate::matrix_z::MatrixZ;
+        use crate::poly::poly_ring::Poly;
+
     #[test]
     fn test(){
 
-        let x = Zn::new(10, 13);
+        
 
-        let y = Zn::sqrt(x);
-
-        println!("{:?}",y)
+        
        
     }
 
