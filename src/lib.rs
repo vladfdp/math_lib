@@ -904,7 +904,7 @@ mod tests {
     
     mod num_theory_test{
 
-        use crate::num_theory::is_prime;
+        use crate::num_theory::{is_prime, gcd};
 
         #[test]
         fn prime_check(){
@@ -913,6 +913,14 @@ mod tests {
             assert!(is_prime(17));
             assert!(is_prime(31));
             assert!(!is_prime(16));
+        }
+
+        #[test]
+        fn gcd_test(){
+
+            assert!(gcd(462, 1071) == 21);
+            assert!(gcd(562, 64) == 2);
+            assert!(gcd(34,113)==1)
         }
     }
     

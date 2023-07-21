@@ -19,3 +19,11 @@ pub fn is_prime(n:i32)->bool{ //this is slow, will implement miller-rabin or som
     lhs == rhs
 
 }
+
+pub fn gcd(a:i32,b:i32)->i32{
+    if b == 0{
+        a
+    }else{
+        gcd(b, a % b)
+    }
+}
